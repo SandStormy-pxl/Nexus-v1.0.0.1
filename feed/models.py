@@ -8,7 +8,7 @@ class Post(models.Model):
     imagem_b64 = models.TextField(blank=True, null=True)
     video_b64 = models.TextField(blank=True, null=True)
     criado_em = models.DateTimeField(auto_now_add=True)
-
+    exclusivo_melhores_amigos = models.BooleanField(default=False)
     class Meta:
         ordering = ['-criado_em']
         verbose_name = 'Post'
