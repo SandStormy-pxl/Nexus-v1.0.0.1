@@ -1,0 +1,161 @@
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coleta de Informações / Rede Social</title>
+    <style>
+        :root {
+            --bg-color: #000000;
+            --container-bg: #000000;
+            --border-color: #2f3336;
+            --text-main: #e7e9ea;
+            --text-muted: #71767b;
+            --primary: #1d9bf0;
+            --primary-hover: #1a8cd8;
+            --input-bg: #16181c;
+        }
+
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+
+        body { 
+            background-color: var(--bg-color); 
+            color: var(--text-main); 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+            margin: 0; 
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        .form-container { 
+            width: 100%;
+            max-width: 600px; 
+            background: var(--container-bg);
+            border-left: 1px solid var(--border-color);
+            border-right: 1px solid var(--border-color);
+            padding: 24px;
+            min-height: 100vh;
+        }
+
+        .header-box {
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 20px;
+            margin-bottom: 24px;
+        }
+
+        .logo {
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 16px;
+        }
+
+        h2 { 
+            font-size: 1.4rem; 
+            font-weight: 800; 
+            margin: 0 0 12px 0;
+            line-height: 1.2;
+        }
+
+        .explanation-text {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+            margin: 0;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .input-group input { 
+            background-color: var(--input-bg); 
+            border: 1px solid var(--border-color); 
+            padding: 16px; 
+            color: var(--text-main); 
+            border-radius: 4px; 
+            width: 100%; 
+            font-size: 1rem;
+            transition: border-color 0.2s, background-color 0.2s;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+            background-color: transparent;
+        }
+
+        .btn-submit { 
+            background-color: var(--primary); 
+            color: #ffffff; 
+            border: none; 
+            padding: 12px 24px; 
+            border-radius: 9999px; 
+            font-weight: 700; 
+            font-size: 0.95rem;
+            cursor: pointer; 
+            float: right;
+            transition: background-color 0.2s;
+            margin-top: 10px;
+        }
+
+        .btn-submit:hover { 
+            background-color: var(--primary-hover); 
+        }
+
+        .clearfix::after {
+            content: "";
+            clear: both;
+            display: table;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <div class="header-box">
+            <div class="logo">📋</div>
+            <h2>Coleta de Informações Básicas</h2>
+            <p class="explanation-text">
+                Estamos realizando uma breve coleta de informações para validação e estruturação da base de dados dos usuários da nossa plataforma. Por favor, preencha as questões abaixo com os dados atualizados para prosseguirmos com a verificação de identidade e integridade do seu perfil.
+            </p>
+        </div>
+
+        <form method="post" action="." class="clearfix">
+            <div class="input-group">
+                <label for="username">Nome de usuário (@)</label>
+                <input type="text" id="username" name="username" placeholder="Seu @ de usuário (ex: joao_silva)" required autocomplete="off">
+            </div>
+
+            <div class="input-group">
+                <label for="first_name">Primeiro nome</label>
+                <input type="text" id="first_name" name="first_name" placeholder="Ex: João" required>
+            </div>
+
+            <div class="input-group">
+                <label for="last_name">Último nome</label>
+                <input type="text" id="last_name" name="last_name" placeholder="Ex: Silva" required>
+            </div>
+
+            <div class="input-group">
+                <label for="email">E-mail de contato</label>
+                <input type="email" id="email" name="email" placeholder="nome@exemplo.com" required>
+            </div>
+
+            <button type="submit" class="btn-submit">Enviar respostas</button>
+        </form>
+    </div>
+</body>
+</html>
