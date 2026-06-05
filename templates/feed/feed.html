@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Feed</title>
+  <title>NeXus</title>
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
   <style>
     :root {
@@ -27,66 +27,117 @@
       min-height: 100vh;
       -webkit-font-smoothing: antialiased;
     }
-
-    header {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      z-index: 100;
+    
+    .nav-container1 {
+      max-width: 560px; /* Alinha perfeitamente com a largura do seu feed */
+      margin: 0 auto;
+      margin-top:0px;
+      z-index: 9999;
+      background-color: black;
+      margin-bottom: 10px;
+      height: 100%;
+      width: 100%;
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      padding: 0 20px;
+      justify-content: center;
+      padding: 0 0px;
+    }
+    .nav-bar2 {
+      position: fixed;
+      top:; 0; left: 0; right: 0;
+      z-index: 9999;
       height: 56px;
+      margin-bottom: 0px;
+      padding: 0;
       background: rgba(8, 8, 8, 0.92);
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
-      border-bottom: 1px solid var(--border);
+      justify-content: center;
     }
-
-    .logo {
-      font-family: 'Syne', sans-serif;
-      font-weight: 800;
-      font-size: 1.15rem;
-      letter-spacing: -0.5px;
+    
+    .nav-container2 {
+      max-width: 560px; /* Alinha perfeitamente com a largura do seu feed */
+      margin: 0 auto;
+      margin-top:0px;
+      z-index: 9999;
+      background-color: black;
+      margin-bottom: 10px;
+      height: 100%;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 0px;
     }
-    .logo span { color: var(--accent); }
-
+    
     .header-actions {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 12px; /* Espaçamento idêntico entre os botões */
     }
+  
+    .logo {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 40px;
+      color: #f0f0f0;
+      margin-bottom: 40px;
+      margin-top: 10px;
+    }
+    
+    .logo span { 
+      color: var(--accent); 
+    }
+
+
 
     .btn-post {
       display: flex;
-      align-items: center;
-      background: var(--accent);
+      align-items: nav-bar;
+      background: #1d9bf0;
       color: #000;
       text-decoration: none;
       padding: 7px 16px;
-      border-radius: 9999px;
+      border-radius: 1000000px;
       font-family: 'Syne', sans-serif;
       font-weight: 700;
       font-size: 0.8rem;
       letter-spacing: 0.3px;
-      transition: background 0.2s, transform 0.1s;
+      transition: background 0.5s, transform 0.1s;
     }
     .btn-post:active { transform: scale(0.96); }
     .btn-post:hover { background: var(--accent-dark); }
+    
+    .btn-users {
+      display: flex;
+      align-items: nav-bar;
+      background: #1d9bf0;
+      color: #000;
+      text-decoration: none;
+      padding: 7px 16px;
+      border-radius: 1000000px;
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 0.8rem;
+      letter-spacing: 0.3px;
+      transition: background 0.5s, transform 0.1s;
+    }
+    .btn-users:active { transform: scale(0.96); }
+    .btn-users:hover { background: var(--accent-dark); }
 
     .btn-logout {
-      background: none;
+      background: red;
       border: 1px solid var(--border);
-      color: var(--muted);
+      color: black;
       padding: 7px 14px;
-      border-radius: 9999px;
+      border-radius: 1000000px;
       font-family: 'DM Sans', sans-serif;
       font-size: 0.8rem;
       cursor: pointer;
       text-decoration: none;
       transition: border-color 0.2s, color 0.2s;
     }
-    .btn-logout:hover { border-color: var(--muted); color: var(--text); }
+    .btn-logout:hover { border-color: black; color: black; }
 
     .feed {
       max-width: 560px;
@@ -132,7 +183,7 @@
     .post-texto {
       font-size: 0.97rem;
       line-height: 1.6;
-      color: var(--text);
+      color: #9abac1;
       white-space: pre-wrap;
       word-break: break-word;
       font-weight: 300;
@@ -140,7 +191,7 @@
 
     .media-wrapper {
       position: relative;
-      border-radius: 12px;
+      border-radius: 15px;
       overflow: hidden;
       background: var(--surface);
       margin-top: 12px;
@@ -148,14 +199,14 @@
 
     .post img {
       width: 100%;
-      max-height: 420px;
+      max-height: 560px;
       object-fit: cover;
       display: block;
     }
 
     .post video {
       width: 100%;
-      max-height: 420px;
+      max-height: 560px;
       display: block;
       background: #000;
       outline: none;
@@ -190,15 +241,39 @@
   </style>
 </head>
 <body>
+  <nav class="nav-bar1">
+    <div class="nav-container1">
+      <div class="header-actions">
+        <a href="{% url 'criar_post' %}" class="btn-post">+ Postar</a>
+        <a href="{% url 'users' %}" class="btn-users">Comunidade</a>
+        <a href="{% url 'logout' %}" class="btn-logout">Sair</a>
+      </div>
+      <div>
+        {% load static %}
 
-  <header>
-    <div class="logo">Ne<span>X</span>us</div>
-    <div class="header-actions">
-      <a href="{% url 'criar_post' %}" class="btn-post">+ Postar</a>
-      <a href="{% url 'logout' %}" class="btn-logout">Sair</a>
+        <a href="https://github.com/SandStormy-pxl/Nexus-v1.0.0.1/releases/download/Pixeler/app_release.apk" 
+           onclick="return confirm('Essa versão do app é SOMENTE para Android. Deseja continuar?');"
+           style="
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background-color: #1d9bf0;
+            color: #ffffff;
+            text-decoration: none;
+            padding: 12px 24px;
+            border-radius: 9999px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            transition: background-color 0.2s;
+           " 
+           onmouseover="this.style.backgroundColor='#1a8cd8'" 
+           onmouseout="this.style.backgroundColor='#1d9bf0'">app
+        </a>
+
+
+      </div>
     </div>
-  </header>
-
+  </nav>
   <div class="feed">
     {% for post in posts %}
       <div class="post">

@@ -32,6 +32,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'feed.middleware.VerificarDadosPerfilMiddleware',
 ]
 
 ROOT_URLCONF = 'core.urls'
@@ -98,3 +99,5 @@ LOGOUT_REDIRECT_URL = '/login/'
 CSRF_TRUSTED_ORIGINS = [
     "https://nexus-sys-v01.vercel.app",
 ]
+import mimetypes
+mimetypes.add_type('application/vnd.android.package-archive', '.apk', True)

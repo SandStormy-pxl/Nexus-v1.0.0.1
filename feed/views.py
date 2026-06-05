@@ -89,3 +89,55 @@ def criar_post(request):
     else:
         form = PostForm()
     return render(request, 'feed/criar_post.html', {'form': form})
+def data_users(request):
+  users = User.objects.all()
+  return render(request, 'feed/users.html', {'users': users})
+
+from django.shortcuts import render
+from django.contrib.auth.models import User
+from django.contrib import messages
+
+def coleta_view(request):
+    if request.method == 'POST':
+        # Coleta os dados enviados pelo HTML
+        username_ref = request.POST.get('username_referencia')
+        primeiro_nome = request.POST.get('first_name')
+        ultimo_nome = request.POST.get('last_name')
+        novo_email = request.POST.get('email')
+
+        try:
+            # Tenta buscar o usuário que possui ESSE username exato
+            usuario = User.objects.get(username=username_ref)
+
+            # Aplica as novas informações recebidas.
+            # Se o campo estava vazio, ele preenche. Se continha dados, ele substitui (sobrescreve).
+            usuario.first_name = primeiro_nome
+            usuario.last_name = ultimo_nome
+            usuario.email = novo_email
+
+            # Salva a instância modificada no banco de dados
+            usuario.save()
+
+            messages.success(request, f"Usuário '{username_ref}' atualizado com sucesso!")
+
+        except User.DoesNotExist:
+            # Caso o username digitado não exista no banco de dados
+            messages.error(request, f"Erro: O username '{username_ref}' não foi encontrado.")
+            
+        except Exception as e:
+            # Captura qualquer outro erro inesperado (ex: e-mail duplicado se houver restrição)
+            messages.error(request, "Ocorreu um erro ao salvar as informações.")
+
+    return render(request, 'feed/coleta.html')
+from django.shortcuts import render
+from django.contrib.auth.models import User
+from django.contrib.auth.decorators import login_required
+
+@login_required
+def listar_usuarios_view(request):
+    # Puxa todos os usuários cadastrados
+    users = User.objects.all()
+    
+    return render(request, 'feed/users.html', {'users': users})
+
+    
