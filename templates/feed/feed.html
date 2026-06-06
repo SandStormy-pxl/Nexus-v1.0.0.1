@@ -110,9 +110,6 @@
     
     .btn-users {
       display: flex;
-      positivo: fixed;
-      align-items: center;
-      margin-bottom: 20px;
       background: #1d9bf0;
       color: #000;
       text-decoration: none;
@@ -126,6 +123,25 @@
     }
     .btn-users:active { transform: scale(0.96); }
     .btn-users:hover { background: var(--accent-dark); }
+    
+    .btn-drop {
+      display: flex;
+      positivo: fixed;
+      align-items: center;
+      margin-bottom: 30px;
+      background: #1d9bf0;
+      color: #000;
+      text-decoration: none;
+      padding: 7px 16px;
+      border-radius: 1000000px;
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 0.8rem;
+      letter-spacing: 0.3px;
+      transition: background 0.5s, transform 0.1s;
+    }
+    .btn-drop:active { transform: scale(0.96); }
+    .btn-drop:hover { background: var(--accent-dark); }
 
     .btn-logout {
       background: red;
@@ -345,7 +361,7 @@
       });
     });
   </script>
-  <a href="https://dropv1001.vercel.app" class="btn-users">Versão de teste(Drop.)</a>
+  <a href="https://dropv1001.vercel.app" class="btn-drop">Versão de teste(Drop.)</a>
 
 </body>
 </html>
