@@ -272,17 +272,23 @@
         <a href="https://github.com/SandStormy-pxl/Nexus-v1.0.0.1/releases/download/Pixeler/app_release.apk" 
            onclick="return confirm('Essa versão do app é SOMENTE para Android. Deseja continuar?');"
            style="
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            background-color: #1d9bf0;
-            color: #ffffff;
-            text-decoration: none;
-            padding: 12px 24px;
-            border-radius: 9999px;
-            font-weight: 700;
-            font-size: 0.95rem;
-            transition: background-color 0.2s;
+
+      display: flex;
+      align-items: nav-bar;
+      background: #1d9bf0;
+      color: #000;
+      text-decoration: none;
+      padding: 7px 16px;
+      border-radius: 1000000px;
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 0.8rem;
+      letter-spacing: 0.3px;
+      transition: background 0.5s, transform 0.1s;
+    }
+    .btn-post:active { transform: scale(0.96); }
+    .btn-post:hover { background: var(--accent-dark); }
+           
            " 
            onmouseover="this.style.backgroundColor='#1a8cd8'" 
            onmouseout="this.style.backgroundColor='#1d9bf0'">app
