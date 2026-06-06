@@ -266,9 +266,7 @@
         <a href="{% url 'users' %}" class="btn-users">Comunidade</a>
         <a href="{% url 'logout' %}" class="btn-logout">Sair</a>
       </div>
-      <div>
-        {% load static %}
-
+      <div>]
         <a href="https://github.com/SandStormy-pxl/Nexus-v1.0.0.1/releases/download/Pixeler/app_release.apk" 
            onclick="return confirm('Essa versão do app é SOMENTE para Android. Deseja continuar?');"
            style="
@@ -299,6 +297,8 @@
     </div>
   </nav>
   <div class="feed">
+    <a href="https://dropv1001.vercel.app" class="btn-drop">Versão de teste(Drop.)</a>
+
     {% for post in posts %}
       <div class="post">
         <div class="post-header">
@@ -367,7 +367,5 @@
       });
     });
   </script>
-  <a href="https://dropv1001.vercel.app" class="btn-drop">Versão de teste(Drop.)</a>
-
 </body>
 </html>
