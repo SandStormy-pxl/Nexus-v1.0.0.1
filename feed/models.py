@@ -49,6 +49,13 @@ class ConfiguracaoSistema(models.Model):
         verbose_name="Mensagem de Aviso"
     )
 
+    exibir_alerta_geral = models.BooleanField(default=False, verbose_name="Exibir Alerta Geral no Topo")
+    texto_alerta_geral = models.CharField(
+        max_length=255, 
+        default="Aviso importante para todos os usuários!", 
+        verbose_name="Texto do Alerta Geral"
+    )
+
     class Meta:
         verbose_name = "Configuração do Sistema"
         verbose_name_plural = "Configurações do Sistema"
