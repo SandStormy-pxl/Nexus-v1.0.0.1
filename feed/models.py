@@ -69,11 +69,12 @@ from django.contrib.auth.models import User
 # Adiciona isto no final do teu feed/models.py:
 class Seguidor(models.Model):
     seguidor = models.ForeignKey(User, on_delete=models.CASCADE, related_name='seguindo')
-    alvo = models.ForeignKey(User, on_delete=models.CASCADE, related_name='seguidores')
+    # Garanta que o nome desta variável abaixo seja 'seguido'
+    seguido = models.ForeignKey(User, on_delete=models.CASCADE, related_name='seguidores')
     criado_em = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        unique_together = ('seguidor', 'alvo')
+        unique_together = ('seguidor', 'seguido')
 
     def __str__(self):
-        return f"{self.seguidor.username} segue {self.alvo.username}"
+        return f"{self.seguidor.username} segue {self.seguido.username}"

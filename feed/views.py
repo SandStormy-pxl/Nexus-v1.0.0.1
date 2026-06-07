@@ -147,16 +147,12 @@ from .models import Post, Seguidor  # Importa do próprio app feed
 
 @login_required
 def pagina_perfil(request, username):
-    # Busca o utilizador dono do perfil pelo username
     perfil_user = get_object_or_404(User, username=username)
-    
-    # Pega os posts deste utilizador: os novos ficam em CIMA (-id)
     posts = Post.objects.filter(autor=perfil_user).order_by('-id')
     
-    # Verifica se tu já segues este perfil
-    ja_segue = Seguidor.objects.filter(seguidor=request.user, alvo=perfil_user).exists()
+    # ATENÇÃO AQUI: Mudamos de alvo=perfil_user para seguido=perfil_user
+    ja_segue = Seguidor.objects.filter(seguidor=request.user, seguido=perfil_user).exists()
     
-    # Conta os seguidores e quem ele segue
     total_seguidores = perfil_user.seguidores.count()
     total_seguindo = perfil_user.seguindo.count()
 
@@ -173,15 +169,15 @@ def pagina_perfil(request, username):
 def dar_seguir(request, username):
     alvo_user = get_object_or_404(User, username=username)
     
-    # Impede que tentes seguir a ti mesmo
     if request.user != alvo_user:
-        seguindo_registro = Seguidor.objects.filter(seguidor=request.user, alvo=alvo_user)
+        # ATENÇÃO AQUI: Mudamos de alvo=alvo_user para seguido=alvo_user
+        seguindo_registro = Seguidor.objects.filter(seguidor=request.user, seguido=alvo_user)
         
         if seguindo_registro.exists():
-            seguindo_registro.delete()  # Se já seguia, deixa de seguir
+            seguindo_registro.delete()
         else:
-            Seguidor.objects.create(seguidor=request.user, alvo=alvo_user)  # Se não seguia, começa a seguir
+            # ATENÇÃO AQUI: Mudamos de alvo=alvo_user para seguido=alvo_user
+            Seguidor.objects.create(seguidor=request.user, seguido=alvo_user)
             
     return redirect('perfil', username=username)
 
-    
