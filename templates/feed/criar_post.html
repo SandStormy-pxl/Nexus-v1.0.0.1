@@ -117,6 +117,27 @@
   </style>
 </head>
 <body>
+  {% if exibir_alerta %}
+  <div style="
+    background-color: #e11d48; /* Vermelho alerta */
+    color: #ffffff;
+    text-align: center;
+    padding: 10px 20px;
+    font-size: 0.95rem;
+    font-weight: bold;
+    width: 100%;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    z-index: 9999;
+    position: relative;
+">
+    📢 <span>{{ texto_alerta }}</span>
+  </div>
+  {% endif %}
+
 
   <header>
     <a href="{% url 'feed' %}">←</a>
