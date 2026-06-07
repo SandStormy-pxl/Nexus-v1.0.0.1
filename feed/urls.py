@@ -9,4 +9,6 @@ urlpatterns = [
     path('cadastro/', views.signup_view, name='signup'),
     path('users/', views.data_users, name='users'),
     path('coleta/', views.coleta_view, name='coleta'),
+    path('p/<str:username>/', views.pagina_perfil, name='perfil'),
+    path('p/<str:username>/seguir/', views.dar_seguir, name='dar_seguir'),
 ]
