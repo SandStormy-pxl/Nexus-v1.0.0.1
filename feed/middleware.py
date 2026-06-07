@@ -51,3 +51,39 @@ class BloqueioPorIPMiddleware:
 
         response = self.get_response(request)
         return response
+
+
+from django.http import HttpResponse
+from django.template import loader
+from .models import ConfiguracaoSistema, IPRegistrado
+
+class BloqueioSustentacaoMiddleware:
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        # 1. PEGAR O IP ATUAL (Para manter a sua segurança de IPs banidos ativa)
+        x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+        ip_atual = x_forwarded_for.split(',')[0].strip() if x_forwarded_for else request.META.get('REMOTE_ADDR')
+
+        # [Segurança anterior] Verifica IPs Banidos
+        if IPRegistrado.objects.filter(endereco_ip=ip_atual, user__perfil__banido=True).exists():
+            return HttpResponse("<h1>Acesso Recusado</h1>", status=403)
+
+        # 2. LÓGICA DO MODO MANUTENÇÃO
+        # Se a pessoa estiver tentando acessar o painel administrativo (/admin), NÃO bloqueia.
+        # Isso garante que você consiga entrar para desligar a manutenção depois!
+        if not request.path.startswith('/admin'):
+            config = ConfiguracaoSistema.objects.first()
+            
+            # Se a configuração existir e o modo manutenção estiver ativo
+            if config and config.modo_manutencao:
+                # E se quem está acessando NÃO for um administrador logado
+                if not (request.user.is_authenticated and request.user.is_staff):
+                    # Renderiza uma página HTML bonita de manutenção
+                    template = loader.get_template('feed/manutencao.html')
+                    context = {'mensagem': config.mensagem_manutencao}
+                    return HttpResponse(template.render(context, request), status=503)
+
+        response = self.get_response(request)
+        return response
