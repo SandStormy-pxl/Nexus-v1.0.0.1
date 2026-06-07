@@ -11,4 +11,7 @@ urlpatterns = [
     path('coleta/', views.coleta_view, name='coleta'),
     path('p/<str:username>/', views.pagina_perfil, name='perfil'),
     path('p/<str:username>/seguir/', views.dar_seguir, name='dar_seguir'),
+    path('post/<int:post_id>/curtir/', views.curtir_post, name='curtir_post'),
+    path('post/<int:post_id>/', views.ver_post, name='ver_post'),
+    path('chat/<str:username>/', views.sala_chat, name='chat'),
 ]

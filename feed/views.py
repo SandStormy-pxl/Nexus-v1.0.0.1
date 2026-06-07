@@ -181,3 +181,63 @@ def dar_seguir(request, username):
             
     return redirect('perfil', username=username)
 
+from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib.auth.decorators import login_required
+from django.db.models import Q
+from .models import Post, Curtida, Comentario, MensagemChat
+
+# Função para Curtir/Descurtir
+@login_required
+def curtir_post(request, post_id):
+    post = get_object_or_404(Post, id=post_id)
+    curtido_registro = Curtida.objects.filter(usuario=request.user, post=post)
+    
+    if curtido_registro.exists():
+        curtido_registro.delete()
+    else:
+        Curtida.objects.create(usuario=request.user, post=post)
+        
+    # Retorna para a página onde o usuário estava (Feed ou Perfil)
+    return redirect(request.META.get('HTTP_REFERER', 'feed'))
+
+# Página de Detalhes do Post + Comentários
+@login_required
+def ver_post(request, post_id):
+    post = get_object_or_404(Post, id=post_id)
+    comentarios = post.comentarios.all().order_by('criado_em') # Antigos em cima, novos embaixo
+    
+    if request.method == 'POST':
+        texto_comentario = request.POST.get('texto', '').strip()
+        if texto_comentario:
+            Comentario.objects.create(usuario=request.user, post=post, texto=texto_comentario)
+        return redirect('ver_post', post_id=post.id)
+
+    ja_curtiu = post.curtidas.filter(usuario=request.user).exists()
+
+    context = {
+        'post': post,
+        'comentarios': comentarios,
+        'ja_curtiu': ja_curtiu,
+        'total_curtidas': post.curtidas.count()
+    }
+    return render(request, 'feed/ver_post.html', context)
+
+# Chat Direto com um Usuário específico
+@login_required
+def sala_chat(request, username):
+    outro_usuario = get_object_or_404(User, username=username)
+    
+    # Filtra as mensagens trocadas apenas entre você e essa pessoa
+    mensagens = MensagemChat.objects.filter(
+        (Q(remetente=request.user) & Q(destinatario=outro_usuario)) |
+        (Q(remetente=outro_usuario) & Q(destinatario=request.user))
+    )
+
+    if request.method == 'POST':
+        texto_mensagem = request.POST.get('mensagem', '').strip()
+        if texto_mensagem:
+            MensagemChat.objects.create(remetente=request.user, destinatario=outro_usuario, texto=texto_mensagem)
+        return redirect('chat', username=username)
+
+    return render(request, 'feed/chat.html', {'outro_usuario': outro_usuario, 'mensagens': mensagens})
+

@@ -78,3 +78,32 @@ class Seguidor(models.Model):
 
     def __str__(self):
         return f"{self.seguidor.username} segue {self.seguido.username}"
+
+from django.db import models
+from django.contrib.auth.models import User
+
+# --- CURTIDAS ---
+class Curtida(models.Model):
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE)
+    post = models.ForeignKey('Post', on_delete=models.CASCADE, related_name='curtidas')
+    criado_em = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('usuario', 'post') # Impede curtir o mesmo post duas vezes
+
+# --- COMENTÁRIOS ---
+class Comentario(models.Model):
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE)
+    post = models.ForeignKey('Post', on_delete=models.CASCADE, related_name='comentarios')
+    texto = models.TextField()
+    criado_em = models.DateTimeField(auto_now_add=True)
+
+# --- CHAT / MENSAGENS DIRETAS ---
+class MensagemChat(models.Model):
+    remetente = models.ForeignKey(User, on_delete=models.CASCADE, related_name='mensagens_enviadas')
+    destinatario = models.ForeignKey(User, on_delete=models.CASCADE, related_name='mensagens_recebidas')
+    texto = models.TextField()
+    criado_em = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['criado_em'] # Chat listado em ordem cronológica normal
