@@ -247,7 +247,8 @@
     {% for post in posts %}
       <div class="post">
         <div class="post-header">
-          <span class="post-autor">{{ post.autor.username }}</span>
+          <a href="{% url 'perfil' post.autor.username %}" class="link-perfil">@{{ post.autor.username }}</a>
+
           <span class="post-meta">{{ post.criado_em|date:"d/m/Y · H:i" }}</span>
         </div>
 
