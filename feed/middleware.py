@@ -24,3 +24,30 @@ class VerificarDadosPerfilMiddleware:
 
         response = self.get_response(request)
         return response
+from django.http import HttpResponseForbidden
+from .models import IPRegistrado, PerfilUsuario
+
+class BloqueioPorIPMiddleware:
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        # 1. Captura o IP de quem está tentando acessar a página
+        x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+        if x_forwarded_for:
+            ip_atual = x_forwarded_for.split(',')[0].strip()
+        else:
+            ip_atual = request.META.get('REMOTE_ADDR')
+
+        # 2. Verifica se esse IP está associado a algum usuário com perfil de banido ativo
+        ip_banido = IPRegistrado.objects.filter(
+            endereco_ip=ip_atual, 
+            user__perfil__banido=True
+        ).exists()
+
+        # 3. Se o IP constar na lista de banidos, o servidor recusa o acesso imediatamente (Erro 403)
+        if ip_banido:
+            return HttpResponseForbidden("<h1>Acesso Recusado</h1><p>Conexão rejeitada pelo servidor de segurança.</p>")
+
+        response = self.get_response(request)
+        return response
