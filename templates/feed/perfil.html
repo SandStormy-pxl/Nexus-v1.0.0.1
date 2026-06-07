@@ -136,7 +136,7 @@
       {% if request.user != perfil_user %}
         <a href="{% url 'dar_seguir' perfil_user.username %}" 
            class="btn-seguir {% if ja_segue %}seguir-inativo{% else %}seguir-ativo{% endif %}">
-          {% if ja_segue %}A SEGUIR{% else %}SEGUIR{% endif %}
+          {% if ja_segue %}SEGUINDO{% else %}SEGUIR{% endif %}
         </a>
         <a href="{% url 'chat' perfil_user.username %}" style="color: #fff; background: var(--surface); padding: 8px 16px; border-radius: 20px; text-decoration: none; font-weight: bold;">💬</a>
 
