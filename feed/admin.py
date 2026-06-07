@@ -20,3 +20,18 @@ class PostAdmin(admin.ModelAdmin):
         return bool(obj.video_b64)
     tem_video.boolean = True
     tem_video.short_description = 'Vídeo?'
+
+
+from django.contrib import admin
+from .models import PerfilUsuario, IPRegistrado
+
+@admin.register(PerfilUsuario)
+class PerfilUsuarioAdmin(admin.ModelAdmin):
+    list_display = ('user', 'banido')
+    list_editable = ('banido',)
+
+@admin.register(IPRegistrado)
+class IPRegistradoAdmin(admin.ModelAdmin):
+    list_display = ('endereco_ip', 'user', 'data_registro')
+    search_fields = ('endereco_ip', 'user__username')
+
