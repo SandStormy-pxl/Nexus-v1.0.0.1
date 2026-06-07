@@ -14,7 +14,7 @@
       --text: #f0f0f0;
       --muted: #555555;
       --accent: #1d9bf0;
-      --accent-dark: #1d9bf0;
+      --accent-dark: #1a8cd8;
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -27,111 +27,43 @@
       min-height: 100vh;
       -webkit-font-smoothing: antialiased;
     }
-    
+
     .nav-container1 {
-      max-width: 560px; /* Alinha perfeitamente com a largura do seu feed */
+      max-width: 560px;
       margin: 0 auto;
-      margin-top:0px;
       z-index: 9999;
       background-color: black;
-      margin-bottom: 10px;
       height: 100%;
       width: 100%;
       display: flex;
       align-items: center;
-      justify-content: center;
-      padding: 0 0px;
+      justify-content: space-between; /* Melhor espaçamento entre botões e o app */
+      padding: 0 16px;
     }
+
     .nav-bar1 {
       position: fixed;
-      top:; 0; left: 0; right: 0;
+      top: 0; left: 0; right: 0;
       z-index: 9999;
       height: 56px;
-      margin-bottom: 0px;
-      padding: 0;
       background: rgba(8, 8, 8, 0.92);
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
-      justify-content: center;
-    }
-    
-    .nav-container2 {
-      max-width: 560px; /* Alinha perfeitamente com a largura do seu feed */
-      margin: 0 auto;
-      margin-top:0px;
-      z-index: 9999;
-      background-color: black;
-      margin-bottom: 10px;
-      height: 100%;
-      width: 100%;
       display: flex;
       align-items: center;
-      justify-content: center;
-      padding: 0 0px;
     }
-    
+
     .header-actions {
       display: flex;
       align-items: center;
-      gap: 12px; /* Espaçamento idêntico entre os botões */
-    }
-  
-    .logo {
-      font-family: 'Syne', sans-serif;
-      font-weight: 800;
-      font-size: 40px;
-      color: #f0f0f0;
-      margin-bottom: 40px;
-      margin-top: 10px;
-    }
-    
-    .logo span { 
-      color: var(--accent); 
+      gap: 12px;
     }
 
-
-
-    .btn-post {
+    .btn-post, .btn-users, .btn-app {
       display: flex;
-      align-items: nav-bar;
-      background: #1d9bf0;
-      color: #000;
-      text-decoration: none;
-      padding: 7px 16px;
-      border-radius: 1000000px;
-      font-family: 'Syne', sans-serif;
-      font-weight: 700;
-      font-size: 0.8rem;
-      letter-spacing: 0.3px;
-      transition: background 0.5s, transform 0.1s;
-    }
-    .btn-post:active { transform: scale(0.96); }
-    .btn-post:hover { background: var(--accent-dark); }
-    
-    .btn-users {
-      display: flex;
-      background: #1d9bf0;
-      color: #000;
-      text-decoration: none;
-      padding: 7px 16px;
-      border-radius: 1000000px;
-      font-family: 'Syne', sans-serif;
-      font-weight: 700;
-      font-size: 0.8rem;
-      letter-spacing: 0.3px;
-      transition: background 0.5s, transform 0.1s;
-    }
-    .btn-users:active { transform: scale(0.96); }
-    .btn-users:hover { background: var(--accent-dark); }
-    
-    .btn-drop {
-      display: flex;
-      position: fixed;
       align-items: center;
-      margin-bottom: 30px;
       background: #1d9bf0;
       color: #000;
-      z-index: 100000;
       text-decoration: none;
       padding: 7px 16px;
       border-radius: 1000000px;
@@ -139,7 +71,26 @@
       font-weight: 700;
       font-size: 0.8rem;
       letter-spacing: 0.3px;
-      transition: background 0.5s, transform 0.1s;
+      transition: background 0.3s, transform 0.1s;
+    }
+
+    .btn-post:active, .btn-users:active, .btn-app:active { transform: scale(0.96); }
+    .btn-post:hover, .btn-users:hover, .btn-app:hover { background: var(--accent-dark); }
+
+    .btn-drop {
+      display: inline-flex;
+      align-items: center;
+      margin-bottom: 15px;
+      background: #1d9bf0;
+      color: #000;
+      text-decoration: none;
+      padding: 7px 16px;
+      border-radius: 1000000px;
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 0.8rem;
+      letter-spacing: 0.3px;
+      transition: background 0.3s, transform 0.1s;
     }
     .btn-drop:active { transform: scale(0.96); }
     .btn-drop:hover { background: var(--accent-dark); }
@@ -154,9 +105,9 @@
       font-size: 0.8rem;
       cursor: pointer;
       text-decoration: none;
-      transition: border-color 0.2s, color 0.2s;
+      transition: background 0.2s, color 0.2s;
     }
-    .btn-logout:hover { border-color: black; color: black; }
+    .btn-logout:hover { background: #cc0000; }
 
     .feed {
       max-width: 560px;
@@ -190,7 +141,6 @@
       font-size: 0.88rem;
       color: var(--text);
     }
-
     .post-autor::before { content: '@'; color: var(--accent); }
 
     .post-meta {
@@ -216,19 +166,11 @@
       margin-top: 12px;
     }
 
-    .post img {
+    .post img, .post video {
       width: 100%;
       max-height: 560px;
       object-fit: cover;
       display: block;
-    }
-
-    .post video {
-      width: 100%;
-      max-height: 560px;
-      display: block;
-      background: #000;
-      outline: none;
     }
 
     .mute-badge {
@@ -260,13 +202,13 @@
   </style>
 </head>
 <body>
+  
   {% if exibir_alerta %}
   <div style="
-    background-color: #e11d48; /* Vermelho alerta */
+    background-color: #e11d48;
     color: #ffffff;
     text-align: center;
     padding: 10px 20px;
-    bottom: ;
     font-size: 0.95rem;
     font-weight: bold;
     width: 100%;
@@ -275,8 +217,9 @@
     justify-content: center;
     align-items: center;
     gap: 8px;
-    z-index: 9999;
-    position: fixed;
+    z-index: 10000;
+    position: relative;
+    margin-top: 56px; /* Empurra o alerta para baixo da Navbar fixa */
 ">
     📢 <span>{{ texto_alerta }}</span>
   </div>
@@ -292,35 +235,14 @@
       <div>
         <a href="https://github.com/SandStormy-pxl/Nexus-v1.0.0.1/releases/download/Pixeler/app_release.apk" 
            onclick="return confirm('Essa versão do app é SOMENTE para Android. Deseja continuar?');"
-           style="
-
-      display: flex;
-      align-items: nav-bar;
-      background: #1d9bf0;
-      color: #000;
-      text-decoration: none;
-      padding: 7px 16px;
-      border-radius: 1000000px;
-      font-family: 'Syne', sans-serif;
-      font-weight: 700;
-      font-size: 0.8rem;
-      letter-spacing: 0.3px;
-      transition: background 0.5s, transform 0.1s;
-    }
-    .btn-post:active { transform: scale(0.96); }
-    .btn-post:hover { background: var(--accent-dark); }
-           
-           " 
-           onmouseover="this.style.backgroundColor='#1a8cd8'" 
-           onmouseout="this.style.backgroundColor='#1d9bf0'">app
+           class="btn-app">app
         </a>
-
-
       </div>
     </div>
   </nav>
-  <div class="feed">
-    <a href="https://dropv1001.vercel.app"            onclick="return confirm('Essa versão, é uma versão de teste, então ao entrar, não se preocupe com bugs, pois essa versão está em desenvolvimento. agradecemos sua compreensão ♥');" class="btn-drop">Versão de teste(Drop.)</a>
+
+  <div class="feed" style="{% if exibir_alerta %}padding-top: 20px;{% endif %}">
+    <a href="https://dropv1001.vercel.app" onclick="return confirm('Essa versão, é uma versão de teste, então ao entrar, não se preocupe com bugs, pois essa versão está em desenvolvimento. agradecemos sua compreensão ♥');" class="btn-drop">Versão de teste(Drop.)</a>
 
     {% for post in posts %}
       <div class="post">
