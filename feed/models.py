@@ -38,3 +38,20 @@ class IPRegistrado(models.Model):
 
     def __str__(self):
         return f"{self.endereco_ip} (@{self.user.username})"
+
+
+from django.db import models
+
+class ConfiguracaoSistema(models.Model):
+    modo_manutencao = models.BooleanField(default=False, verbose_name="Ativar Modo Manutenção")
+    mensagem_manutencao = models.TextField(
+        default="O Nexus está em manutenção para melhorias. Voltamos logo!",
+        verbose_name="Mensagem de Aviso"
+    )
+
+    class Meta:
+        verbose_name = "Configuração do Sistema"
+        verbose_name_plural = "Configurações do Sistema"
+
+    def __str__(self):
+        return f"Modo Manutenção: {'LIGADO' if self.modo_manutencao else 'DESLIGADO'}"
