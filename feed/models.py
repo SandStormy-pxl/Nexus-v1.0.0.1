@@ -50,8 +50,7 @@ class ConfiguracaoSistema(models.Model):
     )
 
     exibir_alerta_geral = models.BooleanField(default=False, verbose_name="Exibir Alerta Geral no Topo")
-    texto_alerta_geral = models.CharField(
-        max_length=255, 
+    texto_alerta_geral = models.TextField(
         default="Aviso importante para todos os usuários!", 
         verbose_name="Texto do Alerta Geral"
     )
