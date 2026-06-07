@@ -41,7 +41,7 @@ def enviar_notificacao_novo_post(sender, instance, created, **kwargs):
     # O 'created' garante que você só seja avisado em novos posts (e não em edições)
     if created:
         # Pega o autor do post (ajuste 'user' ou 'autor' dependendo do seu modelo)
-        autor = instance.user.username if hasattr(instance, 'user') else "Alguém"
+        autor = instance.user.username
         
         # Corta o texto do post para não estourar a notificação
         resumo_texto = instance.texto[:50] + "..." if len(instance.texto) > 50 else instance.texto
