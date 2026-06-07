@@ -35,3 +35,11 @@ class IPRegistradoAdmin(admin.ModelAdmin):
     list_display = ('endereco_ip', 'user', 'data_registro')
     search_fields = ('endereco_ip', 'user__username')
 
+
+from django.contrib import admin
+from .models import ConfiguracaoSistema
+
+@admin.register(ConfiguracaoSistema)
+class ConfiguracaoSistemaAdmin(admin.ModelAdmin):
+    list_display = ('modo_manutencao', 'mensagem_manutencao')
+
