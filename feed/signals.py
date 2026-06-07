@@ -50,3 +50,27 @@ def enviar_notificacao_novo_post(sender, instance, created, **kwargs):
             titulo="📝 Novo Post no Feed",
             corpo=f"@{autor} postou: \"{resumo_texto}\""
         )
+from django.contrib.auth.signals import user_logged_in
+from django.dispatch import receiver
+from .models import PerfilUsuario, IPRegistrado
+
+def obter_ip_cliente(request):
+    # Captura o IP real mesmo se o site estiver atrás do proxy da Vercel
+    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    if x_forwarded_for:
+        ip = x_forwarded_for.split(',')[0].strip()
+    else:
+        ip = request.META.get('REMOTE_ADDR')
+    return ip
+
+@receiver(user_logged_in)
+def registrar_ip_no_login(sender, request, user, **kwargs):
+    # 1. Garante que o PerfilUsuario existe (se não existir, cria um)
+    PerfilUsuario.objects.get_or_create(user=user)
+    
+    # 2. Captura o IP atual da requisição
+    ip_atual = obter_ip_cliente(request)
+    
+    if ip_atual:
+        # 3. Salva o IP na "lista" (tabela vinculada) se ele já não estiver lá
+        IPRegistrado.objects.get_or_create(user=user, endereco_ip=ip_atual)
