@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+3<!DOCTYPE html>
 <html lang="pt-br">
 <head>
   <meta charset="UTF-8" />
@@ -117,9 +117,10 @@
   </style>
 </head>
 <body>
+  
   {% if exibir_alerta %}
   <div style="
-    background-color: #e11d48; /* Vermelho alerta */
+    background-color: #e11d48;
     color: #ffffff;
     text-align: center;
     padding: 10px 20px;
@@ -134,10 +135,9 @@
     z-index: 9999;
     position: relative;
 ">
-    📢 <span>{{ texto_alerta }}</span>
+    📢 <span>{{ texto_alerta|linebreaksbr }}</span>
   </div>
   {% endif %}
-
 
   <header>
     <a href="{% url 'feed' %}">←</a>
@@ -185,11 +185,6 @@
         <label for="id_video">Vídeo</label>
         <input type="file" id="id_video" name="video" accept="video/*" />
       </div>
-      <div style="display: flex; align-items: center; gap: 8px;">
-    <input type="checkbox" id="exclusivo" name="exclusivo_melhores_amigos" value="true" style="cursor: pointer;">
-    <label for="exclusivo" style="font-size: 0.9rem; color: #00ba7c; font-weight: bold; cursor: pointer;">🟢 Melhores Amigos</label>
-</div>
-
 
       <button type="submit">Publicar</button>
     </form>
