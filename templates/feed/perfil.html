@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>NeXus - @{{ perfil_user.username }}</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #080808;
+      --surface: #111111;
+      --border: #222222;
+      --text: #f0f0f0;
+      --muted: #555555;
+      --accent: #1d9bf0;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      background: rgba(8, 8, 8, 0.92);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 16px;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    header a { color: var(--accent); text-decoration: none; font-size: 1.2rem; }
+    header h1 { font-family: 'Syne', sans-serif; font-size: 1.1rem; font-weight: 700; }
+
+    .container-perfil {
+      max-width: 560px;
+      margin: 0 auto;
+      padding: 24px 16px 40px;
+    }
+
+    .cabecalho-user {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 24px;
+      margin-bottom: 20px;
+    }
+
+    .nome-completo {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 1.5rem;
+      color: var(--text);
+    }
+
+    .username {
+      font-size: 0.95rem;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+    .username::before { content: '@'; color: var(--accent); }
+
+    .contador-seguidores {
+      display: flex;
+      gap: 16px;
+      margin-top: 14px;
+      font-size: 0.9rem;
+      color: var(--text);
+    }
+    .contador-seguidores span { font-weight: bold; color: var(--accent); }
+
+    .btn-seguir {
+      display: inline-block;
+      width: 100%;
+      text-align: center;
+      padding: 10px;
+      margin-top: 16px;
+      border-radius: 9999px;
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 0.9rem;
+      text-decoration: none;
+      transition: opacity 0.2s, transform 0.1s;
+    }
+    .seguir-ativo { background: #fff; color: #000; }
+    .seguir-inativo { border: 1px solid var(--border); color: #fff; background: transparent; }
+    .btn-seguir:active { transform: scale(0.98); }
+
+    .titulo-posts {
+      font-family: 'Syne', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--muted);
+      margin-bottom: 12px;
+    }
+
+    .post {
+      border-bottom: 1px solid var(--border);
+      padding: 20px 0;
+    }
+
+    .post-meta { font-size: 0.75rem; color: var(--muted); margin-bottom: 8px; }
+    .post-texto { font-size: 0.98rem; line-height: 1.6; color: #9abac1; white-space: pre-wrap; }
+    
+    .media-wrapper { border-radius: 15px; overflow: hidden; background: #111; margin-top: 12px; }
+    .post img, .post video { width: 100%; max-height: 500px; object-fit: cover; display: block; }
+
+    .vazio { text-align: center; color: var(--muted); padding: 40px 20px; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <a href="{% url 'feed' %}">←</a>
+    <h1>Perfil</h1>
+  </header>
+
+  <div class="container-perfil">
+    <div class="cabecalho-user">
+      <h2 class="nome-completo">{% firstof perfil_user.get_full_name perfil_user.username %}</h2>
+      <div class="username">{{ perfil_user.username }}</div>
+
+      <div class="contador-seguidores">
+        <div><span>{{ total_seguindo }}</span> Seguindo</div>
+        <div><span>{{ total_seguidores }}</span> Seguidores</div>
+      </div>
+
+      {% if request.user != perfil_user %}
+        <a href="{% url 'dar_seguir' perfil_user.username %}" 
+           class="btn-seguir {% if ja_segue %}seguir-inativo{% else %}seguir-ativo{% endif %}">
+          {% if ja_segue %}A SEGUIR{% else %}SEGUIR{% endif %}
+        </a>
+      {% endif %}
+    </div>
+
+    <h3 class="titulo-posts">Posts de @{{ perfil_user.username }}</h3>
+
+    <div class="feed-perfil">
+      {% for post in posts %}
+        <div class="post">
+          <div class="post-meta">{{ post.criado_em|date:"d/m/Y · H:i" }}</div>
+          
+          {% if post.texto %}
+            <p class="post-texto">{{ post.texto }}</p>
+          {% endif %}
+
+          {% if post.imagem_b64 %}
+            <div class="media-wrapper">
+              <img src="{{ post.imagem_b64 }}" alt="Imagem" loading="lazy" />
+            </div>
+          {% endif %}
+
+          {% if post.video_b64 %}
+            <div class="media-wrapper">
+              <video muted loop playsinline controls>
+                <source src="{{ post.video_b64 }}" />
+              </video>
+            </div>
+          {% endif %}
+        </div>
+      {% empty %}
+        <div class="vazio">
+          <p>Nenhuma publicação ainda.</p>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+
+</body>
+</html>
