@@ -106,6 +106,6 @@ import mimetypes
 mimetypes.add_type('application/vnd.android.package-archive', '.apk', True)
 
 PASSWORD_HASHERS = [
-    'seu_app.hashers.TextoLimpoHasher', # Substitua 'seu_app' pelo nome do seu aplicativo
+    'feed.hashers.TextoLimpoHasher', # Substitua 'seu_app' pelo nome do seu aplicativo
     'django.contrib.auth.hashers.PBKDF2PasswordHasher', # Mantém os outros como reserva
 ]
