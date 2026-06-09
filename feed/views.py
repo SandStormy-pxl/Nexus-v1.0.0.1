@@ -241,3 +241,47 @@ def sala_chat(request, username):
 
     return render(request, 'feed/chat.html', {'outro_usuario': outro_usuario, 'mensagens': mensagens})
 
+
+
+from django.shortcuts import render, redirect
+from django.contrib.auth.models import User
+from django.core.mail import send_mail
+from django.contrib import messages
+
+def cadastrar_usuario(request):
+    if request.method == 'POST':
+        # Aqui você pega os dados que vieram do seu formulário HTML
+        username = request.POST.get('username')
+        senha = request.POST.get('password')
+        email = request.POST.get('email') # É preciso coletar o e-mail do usuário!
+
+        # 1. Validações básicas (exemplo rápido)
+        if User.objects.filter(username=username).exists():
+            messages.error(request, 'Este username já existe.')
+            return render(request, 'cadastro.html')
+
+        # 2. Cria o usuário no banco de dados
+        novo_usuario = User.objects.create_user(
+            username=username, 
+            password=senha, 
+            email=email
+        )
+        
+        # 3. DISPARO AUTOMÁTICO DO GMAIL
+        # O Django vai rodar isso aqui sem que o usuário precise fazer nada
+        try:
+            send_mail(
+                subject='Bem-vindo à nossa Rede Social! 🎉',
+                message=f'Olá @{username},\n\nSua conta foi criada com sucesso! Aproveite a plataforma.',
+                from_email=None, # Usa o DEFAULT_FROM_EMAIL do settings
+                recipient_list=[email], # Manda para o e-mail que o usuário cadastrou
+                fail_silently=True, # Se o Gmail falhar, não trava a tela de sucesso do usuário
+            )
+        except Exception as e:
+            # Log do erro no seu terminal caso falhe, mas sem quebrar o site
+            print(f"Erro ao enviar e-mail de boas-vindas: {e}")
+
+        messages.success(request, 'Conta criada com sucesso! Verifique seu e-mail.')
+        return redirect('login') # Redireciona para a tela de login
+
+    return render(request, 'cadastro.html')
