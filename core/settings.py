@@ -110,16 +110,11 @@ PASSWORD_HASHERS = [
     'django.contrib.auth.hashers.PBKDF2PasswordHasher', # Mantém os outros como reserva
 ]
 
-# Substitua a configuração antiga por esta no seu settings.py
-
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-
-# Suas credenciais do Gmail
 EMAIL_HOST_USER = 'seu_usuario@gmail.com'
-EMAIL_HOST_PASSWORD = 'colque_aqui_a_senha_de_16_digitos'
+EMAIL_HOST_PASSWORD = 'aquela_senha_de_16_digitos_do_google'
+DEFAULT_FROM_EMAIL = f'Nome da Sua Rede <{EMAIL_HOST_USER}>'
 
-# O remetente que vai aparecer para o usuário
-DEFAULT_FROM_EMAIL = f'Rede Social <{EMAIL_HOST_USER}>'
