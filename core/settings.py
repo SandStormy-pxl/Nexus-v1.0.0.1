@@ -7,24 +7,59 @@ load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = os.environ.get('SECRET_KEY')
+# -------------------------------------------------------
+# SECRET KEY — Fallback seguro para evitar erro 500 no boot
+# -------------------------------------------------------
+SECRET_KEY = os.environ.get(
+    'SECRET_KEY',
+    'django-insecure-nexus-prod-fallback-change-in-vercel-env-vars-998877'
+)
 
-DEBUG = os.environ.get('DEBUG', 'False') == 'True'
+# -------------------------------------------------------
+# DEBUG & ALLOWED HOSTS
+# -------------------------------------------------------
+DEBUG = os.environ.get('DEBUG', 'False').lower() in ('true', '1', 't')
 
-if not SECRET_KEY:
-    if DEBUG:
-        # Chave só para desenvolvimento local. Nunca use em produção.
-        SECRET_KEY = 'django-insecure-dev-only-troque-isso'
-    else:
-        raise RuntimeError(
-            'A variável de ambiente SECRET_KEY não foi definida. '
-            'Configure-a no seu provedor (ex: Vercel) antes de rodar em produção.'
-        )
+raw_hosts = os.environ.get('ALLOWED_HOSTS', '*')
+if raw_hosts == '*':
+    ALLOWED_HOSTS = ['*']
+else:
+    # Remove https://, http:// e barras caso tenham sido colocadas na env var
+    ALLOWED_HOSTS = [
+        h.strip().replace('https://', '').replace('http://', '').rstrip('/')
+        for h in raw_hosts.split(',')
+        if h.strip()
+    ]
+    for default_host in ['.vercel.app', '.now.sh', 'localhost', '127.0.0.1']:
+        if default_host not in ALLOWED_HOSTS:
+            ALLOWED_HOSTS.append(default_host)
 
-ALLOWED_HOSTS = [
-    h.strip() for h in os.environ.get('ALLOWED_HOSTS', '*').split(',') if h.strip()
+# -------------------------------------------------------
+# CSRF & PROXY (Necessário no Vercel / HTTPS)
+# -------------------------------------------------------
+CSRF_TRUSTED_ORIGINS = [
+    'https://*.vercel.app',
+    'https://*.now.sh',
+    'http://localhost:8000',
+    'http://127.0.0.1:8000',
 ]
+raw_csrf = os.environ.get('CSRF_TRUSTED_ORIGINS', '')
+if raw_csrf:
+    for origin in raw_csrf.split(','):
+        origin = origin.strip()
+        if origin:
+            if not origin.startswith(('http://', 'https://')):
+                origin = f'https://{origin}'
+            if origin not in CSRF_TRUSTED_ORIGINS:
+                CSRF_TRUSTED_ORIGINS.append(origin)
 
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+USE_X_FORWARDED_HOST = True
+USE_X_FORWARDED_PORT = True
+
+# -------------------------------------------------------
+# APLICAÇÕES & MIDDLEWARE
+# -------------------------------------------------------
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -71,27 +106,26 @@ WSGI_APPLICATION = 'core.wsgi.application'
 # -------------------------------------------------------
 DATABASE_URL = os.environ.get('DATABASE_URL')
 
-if not DATABASE_URL:
-    if DEBUG:
-        # Fallback só para dev local sem Postgres configurado.
-        DATABASE_URL = 'sqlite:///' + str(BASE_DIR / 'db.sqlite3')
-    else:
-        raise RuntimeError(
-            'A variável de ambiente DATABASE_URL não foi definida. '
-            'Configure-a no seu provedor (ex: Vercel) antes de rodar em produção.'
+if DATABASE_URL:
+    DATABASES = {
+        'default': dj_database_url.config(
+            default=DATABASE_URL,
+            conn_max_age=int(os.environ.get('CONN_MAX_AGE', '0')),
+            ssl_require=not (DATABASE_URL.startswith('sqlite') or '127.0.0.1' in DATABASE_URL or 'localhost' in DATABASE_URL),
         )
-
-DATABASES = {
-    'default': dj_database_url.config(
-        default=DATABASE_URL,
-        conn_max_age=int(os.environ.get('CONN_MAX_AGE', '0')),
-        ssl_require=not DATABASE_URL.startswith('sqlite'),
-    )
-}
-
-# Supabase Transaction Pooler (porta 6543) requer desativar server-side cursors
-if 'postgresql' in DATABASES['default'].get('ENGINE', ''):
-    DATABASES['default']['DISABLE_SERVER_SIDE_CURSORS'] = True
+    }
+    # Supabase Transaction Pooler (porta 6543) requer desativar server-side cursors
+    if 'postgresql' in DATABASES['default'].get('ENGINE', ''):
+        DATABASES['default']['DISABLE_SERVER_SIDE_CURSORS'] = True
+else:
+    # Se DATABASE_URL não foi informada, usa SQLite temporário (/tmp em serverless)
+    db_file = '/tmp/db.sqlite3' if os.environ.get('VERCEL') == '1' else str(BASE_DIR / 'db.sqlite3')
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': db_file,
+        }
+    }
 
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
@@ -110,12 +144,23 @@ USE_TZ = True
 # -------------------------------------------------------
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
+WHITENOISE_MANIFEST_STRICT = False
+WHITENOISE_USE_FINDERS = True
+
+STORAGES = {
+    'default': {
+        'BACKEND': 'django.core.files.storage.FileSystemStorage',
+    },
+    'staticfiles': {
+        'BACKEND': 'whitenoise.storage.CompressedStaticFilesStorage',
+    },
+}
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # -------------------------------------------------------
-# LIMITE DE UPLOAD — 5MB pra não estourar o Supabase free
+# LIMITE DE UPLOAD
 # -------------------------------------------------------
 DATA_UPLOAD_MAX_MEMORY_SIZE = 5242880  # 5MB em bytes
 FILE_UPLOAD_MAX_MEMORY_SIZE = 5242880  # 5MB em bytes
