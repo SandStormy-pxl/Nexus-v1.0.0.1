@@ -3,136 +3,371 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Novo Post</title>
+  <title>Nexus — Novo Post</title>
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    body {
-      background: #000;
-      color: #e7e9ea;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      min-height: 100vh;
+    /* =========================================================
+       RESET & DESIGN TOKENS (Baseado em estilo.txt)
+       ========================================================= */
+    :root {
+      --bg-primary: #000000;
+      --bg-surface: #0a0b0e;
+      --bg-surface-secondary: #111418;
+      --bg-surface-hover: #161a20;
+      --bg-glass: rgba(0, 0, 0, 0.78);
+      
+      --border-subtle: rgba(255, 255, 255, 0.07);
+      --border-medium: rgba(255, 255, 255, 0.12);
+      --border-hover: rgba(255, 255, 255, 0.22);
+      
+      --text-primary: #f7f9f9;
+      --text-secondary: #71767b;
+      --text-muted: #536471;
+      
+      --accent: #1d9bf0;
+      --accent-hover: #1a8cd8;
+      --accent-active: #177cc0;
+      --accent-glow: rgba(29, 155, 240, 0.25);
+      --accent-ring: rgba(29, 155, 240, 0.15);
+      
+      --alert-bg: rgba(239, 68, 68, 0.08);
+      --alert-border: rgba(239, 68, 68, 0.25);
+      --alert-text: #fca5a5;
+      
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --radius-pill: 9999px;
+      
+      --font-stack: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      --transition-smooth: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      font-family: var(--font-stack);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      text-rendering: optimizeLegibility;
+      overflow-y: scroll;
+    }
+
+    /* =========================================================
+       HEADER ATMOSFÉRICO (Vidro Fosco / Soft UI)
+       ========================================================= */
     header {
       position: sticky;
       top: 0;
-      background: rgba(0, 0, 0, 0.85);
-      backdrop-filter: blur(8px);
-      border-bottom: 1px solid #2f3336;
-      padding: 14px 16px;
-      z-index: 10;
-      display: flex;
-      align-items: center;
-      gap: 12px;
+      background: var(--bg-glass);
+      backdrop-filter: blur(14px) saturate(180%);
+      -webkit-backdrop-filter: blur(14px) saturate(180%);
+      border-bottom: 1px solid var(--border-subtle);
+      padding: 12px 20px;
+      z-index: 100;
     }
 
-    header a {
-      color: #1d9bf0;
+    .header-content {
+      max-width: 620px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .back-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: var(--radius-pill);
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-primary);
       text-decoration: none;
-      font-size: 1.2rem;
+      transition: var(--transition-smooth);
+    }
+
+    .back-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: var(--border-medium);
+      color: var(--accent);
+      transform: translateX(-2px);
+    }
+
+    .back-btn svg {
+      width: 18px;
+      height: 18px;
+      fill: currentColor;
     }
 
     header h1 {
-      font-size: 1rem;
+      font-size: 1.15rem;
       font-weight: 700;
-      color: #e7e9ea;
+      letter-spacing: -0.02em;
+      color: var(--text-primary);
     }
 
+    /* =========================================================
+       CONTAINER PRINCIPAL
+       ========================================================= */
     .container {
-      max-width: 600px;
+      max-width: 620px;
       margin: 0 auto;
-      padding: 20px 16px;
+      padding: 24px 20px 60px;
     }
 
+    /* =========================================================
+       ALERTA CONTEXTUAL (Erro / Validação)
+       ========================================================= */
     .erros {
-      background: #2c1515;
-      border: 1px solid #7a2020;
-      border-radius: 8px;
-      padding: 12px 16px;
-      margin-bottom: 16px;
-      font-size: 0.85rem;
-      color: #f4a0a0;
+      background: var(--alert-bg);
+      border: 1px solid var(--alert-border);
+      border-radius: var(--radius-md);
+      padding: 14px 18px;
+      margin-bottom: 24px;
+      font-size: 0.88rem;
+      color: var(--alert-text);
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      animation: fadeIn 0.2s ease-out;
     }
 
-    .erros ul { padding-left: 18px; }
+    .erros svg {
+      width: 20px;
+      height: 20px;
+      fill: currentColor;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .erros ul {
+      list-style-type: none;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* =========================================================
+       FORM CARD & CAMPOS (Soft UI)
+       ========================================================= */
+    .form-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+    }
 
     .campo {
-      margin-bottom: 16px;
+      margin-bottom: 22px;
+    }
+
+    .campo:last-of-type {
+      margin-bottom: 28px;
     }
 
     label {
-      display: block;
-      font-size: 0.82rem;
-      color: #71767b;
-      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.84rem;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+      font-weight: 600;
+      letter-spacing: 0.01em;
+      text-transform: uppercase;
+    }
+
+    label svg {
+      width: 15px;
+      height: 15px;
+      fill: currentColor;
+    }
+
+    /* Textarea com foco progressivo */
+    textarea {
+      width: 100%;
+      min-height: 120px;
+      background: var(--bg-surface-secondary);
+      color: var(--text-primary);
+      border: 1px solid var(--border-medium);
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
+      font-size: 0.98rem;
+      font-family: inherit;
+      line-height: 1.5;
+      resize: vertical;
+      outline: none;
+      transition: var(--transition-smooth);
+    }
+
+    textarea::placeholder {
+      color: var(--text-muted);
+    }
+
+    textarea:focus {
+      border-color: var(--accent);
+      background: #000000;
+      box-shadow: 0 0 0 3px var(--accent-ring);
+    }
+
+    /* Upload cards estilizados mantendo o input nativo */
+    .upload-box {
+      position: relative;
+      background: var(--bg-surface-secondary);
+      border: 1px dashed var(--border-medium);
+      border-radius: var(--radius-md);
+      padding: 16px 18px;
+      transition: var(--transition-smooth);
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .upload-box:hover {
+      border-color: var(--border-hover);
+      background: var(--bg-surface-hover);
+    }
+
+    .upload-box.has-file {
+      border-color: var(--accent);
+      border-style: solid;
+      background: rgba(29, 155, 240, 0.04);
+    }
+
+    .upload-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--text-primary);
+      font-size: 0.9rem;
       font-weight: 500;
     }
 
-    textarea {
-      width: 100%;
-      background: #000;
-      color: #e7e9ea;
-      border: 1px solid #2f3336;
-      border-radius: 8px;
-      padding: 12px;
-      font-size: 0.95rem;
-      font-family: inherit;
-      resize: vertical;
-      outline: none;
-      transition: border-color 0.2s;
+    .upload-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: var(--radius-sm);
+      background: rgba(255, 255, 255, 0.05);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--accent);
+      flex-shrink: 0;
     }
 
-    textarea:focus { border-color: #1d9bf0; }
-
-    input[type="file"] {
-      width: 100%;
-      background: #0a0a0a;
-      color: #71767b;
-      border: 1px dashed #2f3336;
-      border-radius: 8px;
-      padding: 12px;
-      font-size: 0.85rem;
-      cursor: pointer;
-      outline: none;
+    .upload-icon svg {
+      width: 18px;
+      height: 18px;
+      fill: currentColor;
     }
 
-    input[type="file"]:hover { border-color: #71767b; }
+    .file-name-display {
+      font-size: 0.82rem;
+      color: var(--accent);
+      font-weight: 500;
+      word-break: break-all;
+      margin-top: 4px;
+      display: none;
+    }
+
+    .upload-box.has-file .file-name-display {
+      display: block;
+    }
 
     .hint {
-      font-size: 0.75rem;
-      color: #71767b;
-      margin-top: 4px;
+      font-size: 0.76rem;
+      color: var(--text-secondary);
+      margin-top: 2px;
     }
 
+    /* Native file input */
+    input[type="file"] {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      cursor: pointer;
+      z-index: 2;
+    }
+
+    /* =========================================================
+       BOTÃO DE AÇÃO (Pílula com Accent Glow)
+       ========================================================= */
     button[type="submit"] {
       width: 100%;
-      background: #1d9bf0;
-      color: #fff;
+      background: var(--accent);
+      color: #ffffff;
       border: none;
-      border-radius: 9999px;
-      padding: 12px;
-      font-size: 0.95rem;
+      border-radius: var(--radius-pill);
+      padding: 14px 20px;
+      font-size: 0.98rem;
       font-weight: 700;
+      font-family: inherit;
       cursor: pointer;
-      margin-top: 8px;
-      transition: background 0.2s;
+      box-shadow: 0 4px 16px var(--accent-glow);
+      transition: var(--transition-smooth);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
     }
 
-    button[type="submit"]:hover { background: #1a8cd8; }
+    button[type="submit"]:hover {
+      background: var(--accent-hover);
+      box-shadow: 0 6px 20px rgba(29, 155, 240, 0.4);
+      transform: translateY(-1px);
+    }
+
+    button[type="submit"]:active {
+      background: var(--accent-active);
+      transform: translateY(0) scale(0.99);
+    }
+
+    button[type="submit"] svg {
+      width: 18px;
+      height: 18px;
+      fill: currentColor;
+    }
   </style>
 </head>
 <body>
 
   <header>
-    <a href="{% url 'feed' %}">←</a>
-    <h1>Novo Post</h1>
+    <div class="header-content">
+      <a href="{% url 'feed' %}" class="back-btn" title="Voltar ao Feed">
+        <svg viewBox="0 0 24 24">
+          <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+        </svg>
+      </a>
+      <h1>Novo Post</h1>
+    </div>
   </header>
 
   <div class="container">
 
     {% if form.errors %}
       <div class="erros">
+        <svg viewBox="0 0 24 24">
+          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+        </svg>
         <ul>
           {% for campo, erros in form.errors.items %}
             {% for erro in erros %}
@@ -143,30 +378,94 @@
       </div>
     {% endif %}
 
-    <form method="POST" enctype="multipart/form-data">
-      {% csrf_token %}
+    <div class="form-card">
+      <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
 
-      <div class="campo">
-        <label for="id_texto">Texto</label>
-        <textarea id="id_texto" name="texto" rows="3" placeholder="O que está acontecendo?">{{ form.texto.value|default:'' }}</textarea>
-      </div>
+        <div class="campo">
+          <label for="id_texto">
+            <svg viewBox="0 0 24 24">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+            </svg>
+            Texto da Publicação
+          </label>
+          <textarea id="id_texto" name="texto" rows="4" placeholder="O que está acontecendo?">{{ form.texto.value|default:'' }}</textarea>
+        </div>
 
-      <div class="campo">
-        <label for="id_imagem">Imagem</label>
-        <input type="file" id="id_imagem" name="imagem" accept="image/*" />
-        <p class="hint">Máximo 5MB — JPG, PNG, GIF...</p>
-      </div>
+        <div class="campo">
+          <label for="id_imagem">
+            <svg viewBox="0 0 24 24">
+              <path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/>
+            </svg>
+            Imagem
+          </label>
+          <div class="upload-box" id="box_imagem">
+            <input type="file" id="id_imagem" name="imagem" accept="image/*" onchange="atualizarNomeArquivo(this, 'label_imagem', 'box_imagem')" />
+            <div class="upload-header">
+              <div class="upload-icon">
+                <svg viewBox="0 0 24 24">
+                  <path d="M19 7v2.99s-1.99.01-2 0V7h-3s.01-1.99 0-2h3V2h2v3h3v2h-3zm-3 4V8h-3V5H5c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2v-8h-3zM5 19l3-4 2 3 3-4 4 5H5z"/>
+                </svg>
+              </div>
+              <div>
+                <span id="label_imagem">Escolher ou soltar imagem</span>
+                <p class="hint">Máximo 5MB — JPG, PNG, GIF, WebP</p>
+              </div>
+            </div>
+            <div class="file-name-display" id="file_imagem_nome"></div>
+          </div>
+        </div>
 
-      <div class="campo">
-        <label for="id_video">Vídeo</label>
-        <input type="file" id="id_video" name="video" accept="video/*" />
-        <p class="hint">Máximo 5MB — MP4, WebM...</p>
-      </div>
+        <div class="campo">
+          <label for="id_video">
+            <svg viewBox="0 0 24 24">
+              <path d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z"/>
+            </svg>
+            Vídeo
+          </label>
+          <div class="upload-box" id="box_video">
+            <input type="file" id="id_video" name="video" accept="video/*" onchange="atualizarNomeArquivo(this, 'label_video', 'box_video')" />
+            <div class="upload-header">
+              <div class="upload-icon">
+                <svg viewBox="0 0 24 24">
+                  <path d="M14 13l4 3-4 3v-6zm3-7H7c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zM7 18V8h10v10H7z"/>
+                </svg>
+              </div>
+              <div>
+                <span id="label_video">Escolher ou soltar vídeo</span>
+                <p class="hint">Máximo 5MB — MP4, WebM, MOV</p>
+              </div>
+            </div>
+            <div class="file-name-display" id="file_video_nome"></div>
+          </div>
+        </div>
 
-      <button type="submit">Publicar</button>
-    </form>
+        <button type="submit">
+          <svg viewBox="0 0 24 24">
+            <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+          </svg>
+          Publicar
+        </button>
+      </form>
+    </div>
 
   </div>
+
+  <script>
+    function atualizarNomeArquivo(input, labelId, boxId) {
+      const box = document.getElementById(boxId);
+      const label = document.getElementById(labelId);
+      if (input.files && input.files.length > 0) {
+        const file = input.files[0];
+        const sizeMb = (file.size / (1024 * 1024)).toFixed(2);
+        label.textContent = `Selecionado: ${file.name} (${sizeMb} MB)`;
+        box.classList.add('has-file');
+      } else {
+        label.textContent = boxId === 'box_imagem' ? 'Escolher ou soltar imagem' : 'Escolher ou soltar vídeo';
+        box.classList.remove('has-file');
+      }
+    }
+  </script>
 
 </body>
 </html>

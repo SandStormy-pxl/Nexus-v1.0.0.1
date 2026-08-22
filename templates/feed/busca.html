@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Nexus — Buscar Usuários</title>
+  <style>
+    :root {
+      --bg-primary: #000000;
+      --bg-surface: #0a0b0e;
+      --bg-surface-secondary: #111418;
+      --bg-surface-hover: #161a20;
+      --bg-glass: rgba(0, 0, 0, 0.82);
+      
+      --border-subtle: rgba(255, 255, 255, 0.08);
+      --border-medium: rgba(255, 255, 255, 0.14);
+      
+      --text-primary: #f7f9f9;
+      --text-secondary: #71767b;
+      --text-muted: #536471;
+      
+      --accent: #1d9bf0;
+      --accent-hover: #1a8cd8;
+      --accent-glow: rgba(29, 155, 240, 0.25);
+      --accent-ring: rgba(29, 155, 240, 0.15);
+      
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --radius-pill: 9999px;
+      
+      --font-stack: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      --transition-smooth: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      font-family: var(--font-stack);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* HEADER */
+    header {
+      position: sticky;
+      top: 0;
+      background: var(--bg-glass);
+      backdrop-filter: blur(14px) saturate(180%);
+      -webkit-backdrop-filter: blur(14px) saturate(180%);
+      border-bottom: 1px solid var(--border-subtle);
+      padding: 10px 16px;
+      z-index: 100;
+    }
+
+    .header-content {
+      max-width: 620px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .back-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: var(--radius-pill);
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-primary);
+      text-decoration: none;
+      transition: var(--transition-smooth);
+      flex-shrink: 0;
+    }
+
+    .back-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--accent);
+      transform: translateX(-2px);
+    }
+
+    .back-btn svg {
+      width: 18px;
+      height: 18px;
+      fill: currentColor;
+    }
+
+    .busca-form {
+      flex: 1;
+      position: relative;
+    }
+
+    .busca-form input {
+      width: 100%;
+      background: var(--bg-surface);
+      color: var(--text-primary);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-pill);
+      padding: 8px 16px 8px 38px;
+      font-size: 0.92rem;
+      font-family: inherit;
+      outline: none;
+      transition: var(--transition-smooth);
+    }
+
+    .busca-form input:focus {
+      border-color: var(--accent);
+      background: #000;
+      box-shadow: 0 0 0 3px var(--accent-ring);
+    }
+
+    .busca-icon {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 16px;
+      height: 16px;
+      fill: var(--text-muted);
+      pointer-events: none;
+    }
+
+    .container {
+      max-width: 620px;
+      margin: 0 auto;
+      min-height: calc(100vh - 60px);
+      border-left: 1px solid var(--border-subtle);
+      border-right: 1px solid var(--border-subtle);
+    }
+
+    /* RESULTADOS */
+    .resultado {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border-subtle);
+      text-decoration: none;
+      transition: var(--transition-smooth);
+    }
+
+    .resultado:hover {
+      background: var(--bg-surface-hover);
+    }
+
+    .avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-pill);
+      background: linear-gradient(145deg, #181b20, #0c0e12);
+      border: 1px solid var(--border-medium);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--accent);
+      text-transform: uppercase;
+      flex-shrink: 0;
+    }
+
+    .resultado-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .resultado-nome {
+      font-weight: 700;
+      font-size: 0.96rem;
+      color: var(--text-primary);
+    }
+
+    .resultado-handle {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+    }
+
+    .vazio {
+      text-align: center;
+      color: var(--text-secondary);
+      padding: 80px 20px;
+      font-size: 0.92rem;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="header-content">
+      <a href="{% url 'feed' %}" class="back-btn" title="Voltar ao Feed">
+        <svg viewBox="0 0 24 24">
+          <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+        </svg>
+      </a>
+      <form class="busca-form" action="{% url 'busca' %}" method="GET">
+        <svg class="busca-icon" viewBox="0 0 24 24">
+          <path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+        </svg>
+        <input type="text" name="q" value="{{ query }}" placeholder="Buscar por nome de usuário..." autocomplete="off" autofocus />
+      </form>
+    </div>
+  </header>
+
+  <div class="container">
+    {% if query %}
+      {% for usuario in resultados %}
+        <a href="{% url 'perfil' usuario.username %}" class="resultado">
+          <div class="avatar">{{ usuario.username|slice:":1" }}</div>
+          <div class="resultado-info">
+            <span class="resultado-nome">{{ usuario.username }}</span>
+            <span class="resultado-handle">@{{ usuario.username }}</span>
+          </div>
+        </a>
+      {% empty %}
+        <div class="vazio">Nenhum usuário encontrado para "{{ query }}".</div>
+      {% endfor %}
+    {% else %}
+      <div class="vazio">Digite um nome acima para encontrar pessoas na rede.</div>
+    {% endif %}
+  </div>
+
+</body>
+</html>

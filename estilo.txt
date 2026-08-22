@@ -1,0 +1,10 @@
+Identidade Visual e Linguagem de Design
+​Minimalismo de Tema Escuro (Dark Mode First): O projeto adota uma estética totalmente imersiva em tons escuros, utilizando o preto absoluto como tela de fundo principal para destacar o conteúdo e proporcionar uma experiência visual confortável em ambientes de baixa luz.
+​Paleta de Cores Funcional:
+​Neutros Sofisticados: Variações sutis de cinza escuro para estruturar limites, bordas e áreas secundárias, criando uma hierarquia visual limpa sem recorrer a traços pesados.
+​Cor de Destaque (Accent): O azul vibrante é utilizado estrategicamente para guiar a atenção do usuário para ações principais e elementos interativos essenciais.
+​Alerta Contextual: Tons terrosos escuros combinados com vermelhos suaves são aplicados para mensagens de erro, garantindo visibilidade sem agressividade visual.
+​Geometria e Formas (Soft UI): Predomínio de bordas levemente arredondadas em blocos e campos de entrada, transmitindo suavidade e modernidade, contrapostas a botões com curvas extremas (formato de pílula) que remetem a padrões de redes sociais de alta escala.
+​Texturas e Efeitos Atmosféricos: Uso refinado de transparências combinadas com desfoques sutis no plano de fundo (backdrop-filter) para elementos fixos de navegação, gerando uma sensação de profundidade e sobreposição elegante (estética de vidro fosco).
+​Tipografia Nativa e Fluida: Dependência de fontes padrão do sistema operacional para garantir máxima legibilidade, renderização nítida em qualquer tela e uma sensação imediata de familiaridade e velocidade.
+​Transições e Feedback Visual: Mudanças de estado sutis e progressivas (como bordas que mudam de cor ao receber foco) que respondem à interação do usuário de forma orgânica e fluida.

@@ -84,10 +84,14 @@ if not DATABASE_URL:
 DATABASES = {
     'default': dj_database_url.config(
         default=DATABASE_URL,
-        conn_max_age=600,
+        conn_max_age=int(os.environ.get('CONN_MAX_AGE', '0')),
         ssl_require=not DATABASE_URL.startswith('sqlite'),
     )
 }
+
+# Supabase Transaction Pooler (porta 6543) requer desativar server-side cursors
+if 'postgresql' in DATABASES['default'].get('ENGINE', ''):
+    DATABASES['default']['DISABLE_SERVER_SIDE_CURSORS'] = True
 
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
@@ -115,3 +119,12 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # -------------------------------------------------------
 DATA_UPLOAD_MAX_MEMORY_SIZE = 5242880  # 5MB em bytes
 FILE_UPLOAD_MAX_MEMORY_SIZE = 5242880  # 5MB em bytes
+
+# -------------------------------------------------------
+# AUTENTICAÇÃO
+# -------------------------------------------------------
+LOGIN_URL = '/login/'
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/login/'
+
+

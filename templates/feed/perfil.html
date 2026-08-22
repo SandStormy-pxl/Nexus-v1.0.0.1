@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Nexus — @{{ usuario.username }}</title>
+  <style>
+    :root {
+      --bg-primary: #000000;
+      --bg-surface: #0a0b0e;
+      --bg-surface-secondary: #111418;
+      --bg-surface-hover: #161a20;
+      --bg-glass: rgba(0, 0, 0, 0.82);
+      
+      --border-subtle: rgba(255, 255, 255, 0.08);
+      --border-medium: rgba(255, 255, 255, 0.14);
+      --border-hover: rgba(255, 255, 255, 0.22);
+      
+      --text-primary: #f7f9f9;
+      --text-secondary: #71767b;
+      --text-muted: #536471;
+      
+      --accent: #1d9bf0;
+      --accent-hover: #1a8cd8;
+      --accent-active: #177cc0;
+      --accent-glow: rgba(29, 155, 240, 0.25);
+      
+      --red: #f4212e;
+      --red-glow: rgba(244, 33, 46, 0.2);
+      
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --radius-pill: 9999px;
+      
+      --font-stack: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      --transition-smooth: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      font-family: var(--font-stack);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      text-rendering: optimizeLegibility;
+      overflow-y: scroll;
+    }
+
+    /* HEADER */
+    header {
+      position: sticky;
+      top: 0;
+      background: var(--bg-glass);
+      backdrop-filter: blur(14px) saturate(180%);
+      -webkit-backdrop-filter: blur(14px) saturate(180%);
+      border-bottom: 1px solid var(--border-subtle);
+      padding: 12px 20px;
+      z-index: 100;
+    }
+
+    .header-content {
+      max-width: 620px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .back-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: var(--radius-pill);
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-primary);
+      text-decoration: none;
+      transition: var(--transition-smooth);
+    }
+
+    .back-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--accent);
+      transform: translateX(-2px);
+    }
+
+    .back-btn svg {
+      width: 18px;
+      height: 18px;
+      fill: currentColor;
+    }
+
+    header h1 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .container {
+      max-width: 620px;
+      margin: 0 auto;
+      min-height: calc(100vh - 60px);
+      border-left: 1px solid var(--border-subtle);
+      border-right: 1px solid var(--border-subtle);
+    }
+
+    /* PERFIL CARD */
+    .perfil-card {
+      padding: 24px 20px 20px;
+      border-bottom: 1px solid var(--border-subtle);
+      background: var(--bg-surface);
+    }
+
+    .perfil-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+
+    .avatar-grande {
+      width: 68px;
+      height: 68px;
+      border-radius: var(--radius-pill);
+      background: linear-gradient(145deg, #181b20, #0c0e12);
+      border: 2px solid var(--border-medium);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: var(--accent);
+      text-transform: uppercase;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+    }
+
+    .perfil-acoes {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .btn-chat-perfil {
+      width: 38px;
+      height: 38px;
+      border-radius: var(--radius-pill);
+      background: var(--bg-surface-secondary);
+      border: 1px solid var(--border-medium);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-primary);
+      text-decoration: none;
+      transition: var(--transition-smooth);
+    }
+
+    .btn-chat-perfil:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .btn-chat-perfil svg {
+      width: 18px;
+      height: 18px;
+      fill: currentColor;
+    }
+
+    .btn-seguir {
+      background: var(--text-primary);
+      color: #000;
+      border: none;
+      border-radius: var(--radius-pill);
+      padding: 9px 20px;
+      font-size: 0.88rem;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+      text-decoration: none;
+      transition: var(--transition-smooth);
+    }
+
+    .btn-seguir:hover {
+      opacity: 0.9;
+    }
+
+    .btn-seguir.seguindo {
+      background: transparent;
+      border: 1px solid var(--border-medium);
+      color: var(--text-primary);
+    }
+
+    .btn-seguir.seguindo:hover {
+      border-color: var(--red);
+      color: var(--red);
+      background: rgba(244, 33, 46, 0.05);
+    }
+
+    .perfil-nome {
+      font-size: 1.25rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+
+    .perfil-username {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      margin-top: 2px;
+    }
+
+    .perfil-stats {
+      display: flex;
+      gap: 24px;
+      margin-top: 16px;
+    }
+
+    .stat {
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+    }
+
+    .stat-valor {
+      font-weight: 800;
+      font-size: 1rem;
+      color: var(--text-primary);
+    }
+
+    .stat-label {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+    }
+
+    /* POSTS LIST */
+    .post {
+      border-bottom: 1px solid var(--border-subtle);
+      padding: 18px 20px;
+      transition: var(--transition-smooth);
+    }
+
+    .post:hover {
+      background-color: var(--bg-surface-hover);
+    }
+
+    .post-meta {
+      font-size: 0.76rem;
+      color: var(--text-secondary);
+      margin-bottom: 10px;
+    }
+
+    .post-texto {
+      font-size: 0.96rem;
+      line-height: 1.6;
+      color: var(--text-primary);
+      margin-bottom: 12px;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .media-wrapper {
+      position: relative;
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      border: 1px solid var(--border-subtle);
+      background: #000;
+      margin-bottom: 12px;
+    }
+
+    .post img {
+      width: 100%;
+      max-height: 480px;
+      object-fit: cover;
+      display: block;
+    }
+
+    .post video {
+      width: 100%;
+      max-height: 480px;
+      display: block;
+      background: #000;
+      outline: none;
+      cursor: pointer;
+    }
+
+    .mute-badge {
+      position: absolute;
+      bottom: 12px;
+      right: 12px;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(8px);
+      color: #ffffff;
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 5px 12px;
+      border-radius: var(--radius-pill);
+      pointer-events: none;
+      transition: opacity 0.4s ease;
+    }
+
+    .mute-badge.hide { opacity: 0; }
+
+    .acoes {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding-top: 10px;
+      border-top: 1px solid var(--border-subtle);
+    }
+
+    .acao-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: none;
+      border: none;
+      color: var(--text-secondary);
+      font-family: inherit;
+      font-size: 0.85rem;
+      font-weight: 500;
+      cursor: pointer;
+      padding: 6px 10px;
+      border-radius: var(--radius-pill);
+      text-decoration: none;
+      transition: var(--transition-smooth);
+    }
+
+    .acao-btn:hover {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-primary);
+    }
+
+    .acao-btn svg {
+      width: 18px;
+      height: 18px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2;
+    }
+
+    .acao-btn.curtido { color: var(--red); }
+    .acao-btn.curtido svg { fill: var(--red); stroke: var(--red); }
+
+    .vazio {
+      text-align: center;
+      color: var(--text-secondary);
+      padding: 60px 20px;
+      font-size: 0.92rem;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="header-content">
+      <a href="{% url 'feed' %}" class="back-btn" title="Voltar ao Feed">
+        <svg viewBox="0 0 24 24">
+          <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+        </svg>
+      </a>
+      <h1>@{{ usuario.username }}</h1>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="perfil-card">
+      <div class="perfil-top">
+        <div class="avatar-grande">{{ usuario.username|slice:":1" }}</div>
+        {% if usuario != request.user %}
+          <div class="perfil-acoes">
+            <a href="{% url 'chat_conversa' usuario.username %}" class="btn-chat-perfil" title="Enviar Mensagem">
+              <svg viewBox="0 0 24 24">
+                <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/>
+              </svg>
+            </a>
+            <a href="{% url 'seguir' usuario.username %}" class="btn-seguir {% if ja_segue %}seguindo{% endif %}">
+              {% if ja_segue %}Seguindo{% else %}Seguir{% endif %}
+            </a>
+          </div>
+        {% endif %}
+      </div>
+
+      <div class="perfil-nome">{{ usuario.username }}</div>
+      <div class="perfil-username">@{{ usuario.username }}</div>
+
+      <div class="perfil-stats">
+        <div class="stat">
+          <span class="stat-valor">{{ posts.count }}</span>
+          <span class="stat-label">publicações</span>
+        </div>
+        <div class="stat">
+          <span class="stat-valor">{{ total_seguidores }}</span>
+          <span class="stat-label">seguidores</span>
+        </div>
+        <div class="stat">
+          <span class="stat-valor">{{ total_seguindo }}</span>
+          <span class="stat-label">seguindo</span>
+        </div>
+      </div>
+    </div>
+
+    {% for post in posts %}
+      <article class="post">
+        <div class="post-meta">{{ post.criado_em|date:"d/m/Y · H:i" }}</div>
+
+        {% if post.imagem_b64 %}
+          <div class="media-wrapper">
+            <img src="{{ post.imagem_b64 }}" alt="Imagem do post" loading="lazy" />
+          </div>
+        {% endif %}
+
+        {% if post.video_b64 %}
+          <div class="media-wrapper">
+            <video class="autoplay-video" muted loop playsinline preload="metadata">
+              <source src="{{ post.video_b64 }}" />
+            </video>
+            <div class="mute-badge" data-badge>SEM SOM</div>
+          </div>
+        {% endif %}
+
+        {% if post.texto %}
+          <p class="post-texto">{{ post.texto }}</p>
+        {% endif %}
+
+        <div class="acoes">
+          <button class="acao-btn {% if post.id in curtidas_usuario %}curtido{% endif %}" onclick="curtir(this, {{ post.id }})">
+            <svg viewBox="0 0 24 24">
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+            </svg>
+            <span class="curtidas-count-{{ post.id }}">{{ post.curtidas.count }}</span>
+          </button>
+          <a href="{% url 'post_detalhe' post.id %}" class="acao-btn">
+            <svg viewBox="0 0 24 24">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+            </svg>
+            <span>{{ post.comentarios.count }}</span>
+          </a>
+          <a href="{% url 'compartilhar' post.id %}" class="acao-btn">
+            <svg viewBox="0 0 24 24">
+              <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/>
+              <polyline points="16 6 12 2 8 6"/>
+              <line x1="12" y1="2" x2="12" y2="15"/>
+            </svg>
+          </a>
+        </div>
+      </article>
+    {% empty %}
+      <div class="vazio">Nenhuma publicação ainda.</div>
+    {% endfor %}
+  </div>
+
+  <script>
+    const videos = document.querySelectorAll('.autoplay-video');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        const video = entry.target;
+        const badge = video.parentElement.querySelector('[data-badge]');
+        if (entry.isIntersecting && entry.intersectionRatio >= 0.5) {
+          video.play().catch(() => {});
+          if (badge) {
+            badge.classList.remove('hide');
+            setTimeout(() => badge.classList.add('hide'), 2000);
+          }
+        } else {
+          video.pause();
+        }
+      });
+    }, { threshold: 0.5 });
+    videos.forEach(v => observer.observe(v));
+    videos.forEach(video => {
+      video.addEventListener('click', () => {
+        video.muted = !video.muted;
+        const badge = video.parentElement.querySelector('[data-badge]');
+        if (badge) {
+          badge.textContent = video.muted ? 'SEM SOM' : 'COM SOM';
+          badge.classList.remove('hide');
+          setTimeout(() => badge.classList.add('hide'), 1500);
+        }
+      });
+    });
+
+    function curtir(btn, postId) {
+      fetch(`/post/${postId}/curtir/`, {
+        method: 'POST',
+        headers: { 'X-CSRFToken': getCookie('csrftoken'), 'x-requested-with': 'XMLHttpRequest' },
+      }).then(r => r.json()).then(data => {
+        btn.classList.toggle('curtido', data.curtido);
+        const countSpan = document.querySelector(`.curtidas-count-${postId}`);
+        if (countSpan) countSpan.textContent = data.total;
+      });
+    }
+
+    function getCookie(name) {
+      let v = null;
+      document.cookie.split(';').forEach(c => {
+        c = c.trim();
+        if (c.startsWith(name + '=')) v = decodeURIComponent(c.slice(name.length + 1));
+      });
+      return v;
+    }
+  </script>
+</body>
+</html>

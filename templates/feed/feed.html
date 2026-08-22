@@ -3,136 +3,701 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Feed</title>
+  <title>Nexus — Feed</title>
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    body {
-      background: #000;
-      color: #e7e9ea;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      min-height: 100vh;
+    /* =========================================================
+       RESET & DESIGN TOKENS (Baseado em estilo.txt)
+       ========================================================= */
+    :root {
+      --bg-primary: #000000;
+      --bg-surface: #0a0b0e;
+      --bg-surface-hover: #111418;
+      --bg-glass: rgba(0, 0, 0, 0.82);
+      
+      --border-subtle: rgba(255, 255, 255, 0.08);
+      --border-medium: rgba(255, 255, 255, 0.14);
+      --border-hover: rgba(255, 255, 255, 0.22);
+      
+      --text-primary: #f7f9f9;
+      --text-secondary: #71767b;
+      --text-muted: #536471;
+      
+      --accent: #1d9bf0;
+      --accent-hover: #1a8cd8;
+      --accent-active: #177cc0;
+      --accent-glow: rgba(29, 155, 240, 0.25);
+      --accent-subtle: rgba(29, 155, 240, 0.1);
+      
+      --red: #f4212e;
+      --red-glow: rgba(244, 33, 46, 0.2);
+      
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --radius-pill: 9999px;
+      
+      --font-stack: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      --transition-smooth: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      font-family: var(--font-stack);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      text-rendering: optimizeLegibility;
+      overflow-y: scroll;
+    }
+
+    /* =========================================================
+       HEADER ATMOSFÉRICO (Vidro Fosco)
+       ========================================================= */
     header {
       position: sticky;
       top: 0;
-      background: rgba(0, 0, 0, 0.85);
-      backdrop-filter: blur(8px);
-      border-bottom: 1px solid #2f3336;
-      padding: 14px 16px;
-      z-index: 10;
+      background: var(--bg-glass);
+      backdrop-filter: blur(14px) saturate(180%);
+      -webkit-backdrop-filter: blur(14px) saturate(180%);
+      border-bottom: 1px solid var(--border-subtle);
+      padding: 10px 16px;
+      z-index: 100;
+    }
+
+    .header-content {
+      max-width: 620px;
+      margin: 0 auto;
       display: flex;
-      justify-content: space-between;
       align-items: center;
+      justify-content: space-between;
+      gap: 12px;
     }
 
-    header h1 {
-      font-size: 1.1rem;
-      font-weight: 700;
-      color: #e7e9ea;
+    .brand-container {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      color: var(--text-primary);
+      flex-shrink: 0;
     }
 
-    header a {
-      background: #1d9bf0;
+    .brand-icon {
+      width: 32px;
+      height: 32px;
+      background: linear-gradient(135deg, #1d9bf0 0%, #0d6efd 100%);
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 10px var(--accent-glow);
+    }
+
+    .brand-icon svg {
+      width: 18px;
+      height: 18px;
+      fill: #ffffff;
+    }
+
+    .logo-text {
+      font-size: 1.15rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+    }
+
+    /* BARRA DE BUSCA */
+    .busca-form {
+      flex: 1;
+      max-width: 260px;
+      position: relative;
+    }
+
+    .busca-form input {
+      width: 100%;
+      background: var(--bg-surface);
+      color: var(--text-primary);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-pill);
+      padding: 7px 14px 7px 34px;
+      font-size: 0.85rem;
+      font-family: inherit;
+      outline: none;
+      transition: var(--transition-smooth);
+    }
+
+    .busca-form input::placeholder {
+      color: var(--text-muted);
+    }
+
+    .busca-form input:focus {
+      border-color: var(--accent);
+      background: #000;
+      box-shadow: 0 0 0 3px rgba(29, 155, 240, 0.15);
+    }
+
+    .busca-icon {
+      position: absolute;
+      left: 11px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 15px;
+      height: 15px;
+      fill: var(--text-muted);
+      pointer-events: none;
+    }
+
+    /* AÇÕES DO HEADER */
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+
+    .btn-icon-action {
+      position: relative;
+      width: 36px;
+      height: 36px;
+      border-radius: var(--radius-pill);
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-primary);
+      text-decoration: none;
+      transition: var(--transition-smooth);
+    }
+
+    .btn-icon-action:hover {
+      background: rgba(255, 255, 255, 0.09);
+      border-color: var(--border-medium);
+      color: var(--accent);
+    }
+
+    .btn-icon-action svg {
+      width: 18px;
+      height: 18px;
+      fill: currentColor;
+    }
+
+    .badge {
+      position: absolute;
+      top: -3px;
+      right: -3px;
+      background: var(--red);
       color: #fff;
+      font-size: 0.65rem;
+      font-weight: 700;
+      min-width: 18px;
+      height: 18px;
+      border-radius: var(--radius-pill);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 4px;
+      box-shadow: 0 0 8px var(--red-glow);
+    }
+
+    .btn-post-header {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--accent);
+      color: #ffffff;
       text-decoration: none;
       padding: 8px 16px;
-      border-radius: 9999px;
-      font-size: 0.85rem;
-      font-weight: 600;
-      transition: background 0.2s;
+      border-radius: var(--radius-pill);
+      font-size: 0.86rem;
+      font-weight: 700;
+      box-shadow: 0 2px 10px var(--accent-glow);
+      transition: var(--transition-smooth);
+      white-space: nowrap;
     }
 
-    header a:hover { background: #1a8cd8; }
+    .btn-post-header:hover {
+      background: var(--accent-hover);
+      box-shadow: 0 4px 16px rgba(29, 155, 240, 0.4);
+      transform: translateY(-1px);
+    }
 
+    .btn-logout {
+      background: none;
+      border: 1px solid var(--border-subtle);
+      color: var(--text-secondary);
+      padding: 7px 12px;
+      border-radius: var(--radius-pill);
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      transition: var(--transition-smooth);
+    }
+
+    .btn-logout:hover {
+      border-color: var(--border-medium);
+      color: var(--text-primary);
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    /* =========================================================
+       FEED TIMELINE
+       ========================================================= */
     .feed {
-      max-width: 600px;
+      max-width: 620px;
       margin: 0 auto;
+      min-height: calc(100vh - 60px);
+      border-left: 1px solid var(--border-subtle);
+      border-right: 1px solid var(--border-subtle);
     }
 
     .post {
-      border-bottom: 1px solid #2f3336;
-      padding: 16px;
-      transition: background 0.15s;
+      border-bottom: 1px solid var(--border-subtle);
+      padding: 18px 20px;
+      transition: var(--transition-smooth);
+      animation: fadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) both;
     }
 
-    .post:hover { background: #080808; }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .post:hover {
+      background-color: var(--bg-surface-hover);
+    }
+
+    .post-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    .post-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius-pill);
+      background: linear-gradient(145deg, #181b20, #0c0e12);
+      border: 1px solid var(--border-medium);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--accent);
+      font-weight: 700;
+      font-size: 1.05rem;
+      text-decoration: none;
+      flex-shrink: 0;
+      text-transform: uppercase;
+    }
+
+    .post-meta-group {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .post-author {
+      font-size: 0.94rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .post-author:hover {
+      color: var(--accent);
+    }
 
     .post-meta {
-      font-size: 0.78rem;
-      color: #71767b;
-      margin-bottom: 8px;
+      font-size: 0.76rem;
+      color: var(--text-secondary);
+    }
+
+    .post-body {
+      margin-left: 52px;
+    }
+
+    @media (max-width: 560px) {
+      .post { padding: 14px 16px; }
+      .post-body { margin-left: 0; margin-top: 8px; }
+      .busca-form { display: none; }
     }
 
     .post-texto {
-      font-size: 0.95rem;
-      line-height: 1.5;
-      color: #e7e9ea;
-      margin-bottom: 10px;
+      font-size: 0.96rem;
+      line-height: 1.6;
+      color: var(--text-primary);
+      margin-bottom: 12px;
       white-space: pre-wrap;
       word-break: break-word;
     }
 
+    .media-wrapper {
+      position: relative;
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      border: 1px solid var(--border-subtle);
+      background: #000;
+      margin-bottom: 12px;
+    }
+
     .post img {
       width: 100%;
-      max-height: 400px;
+      max-height: 480px;
       object-fit: cover;
-      border-radius: 12px;
-      border: 1px solid #2f3336;
-      margin-top: 8px;
+      display: block;
     }
 
     .post video {
       width: 100%;
-      max-height: 400px;
-      border-radius: 12px;
-      border: 1px solid #2f3336;
-      margin-top: 8px;
+      max-height: 480px;
+      display: block;
       background: #000;
+      outline: none;
+      cursor: pointer;
     }
 
+    .mute-badge {
+      position: absolute;
+      bottom: 12px;
+      right: 12px;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(8px);
+      color: #ffffff;
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 5px 12px;
+      border-radius: var(--radius-pill);
+      pointer-events: none;
+      transition: opacity 0.4s ease;
+    }
+
+    .mute-badge.hide {
+      opacity: 0;
+    }
+
+    /* =========================================================
+       BARRA DE AÇÕES DO POST
+       ========================================================= */
+    .acoes {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding-top: 10px;
+      border-top: 1px solid var(--border-subtle);
+    }
+
+    .acao-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: none;
+      border: none;
+      color: var(--text-secondary);
+      font-family: inherit;
+      font-size: 0.85rem;
+      font-weight: 500;
+      cursor: pointer;
+      padding: 6px 10px;
+      border-radius: var(--radius-pill);
+      text-decoration: none;
+      transition: var(--transition-smooth);
+    }
+
+    .acao-btn:hover {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-primary);
+    }
+
+    .acao-btn svg {
+      width: 18px;
+      height: 18px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2;
+      transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .acao-btn.curtido {
+      color: var(--red);
+    }
+
+    .acao-btn.curtido svg {
+      fill: var(--red);
+      stroke: var(--red);
+      transform: scale(1.15);
+    }
+
+    .acao-btn.curtido:hover {
+      background: rgba(244, 33, 46, 0.1);
+    }
+
+    /* =========================================================
+       VAZIO (Empty State)
+       ========================================================= */
     .vazio {
       text-align: center;
-      color: #71767b;
-      padding: 60px 16px;
-      font-size: 0.95rem;
+      color: var(--text-secondary);
+      padding: 80px 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .vazio-icon {
+      width: 60px;
+      height: 60px;
+      border-radius: var(--radius-pill);
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--accent);
+    }
+
+    .vazio-icon svg {
+      width: 28px;
+      height: 28px;
+      fill: currentColor;
+    }
+
+    .vazio h2 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .vazio p {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      max-width: 320px;
+      line-height: 1.5;
+    }
+
+    .vazio-btn {
+      margin-top: 8px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--accent);
+      color: #ffffff;
+      text-decoration: none;
+      padding: 10px 22px;
+      border-radius: var(--radius-pill);
+      font-size: 0.9rem;
+      font-weight: 700;
+      box-shadow: 0 2px 14px var(--accent-glow);
+      transition: var(--transition-smooth);
+    }
+
+    .vazio-btn:hover {
+      background: var(--accent-hover);
+      box-shadow: 0 4px 18px rgba(29, 155, 240, 0.4);
+      transform: translateY(-1px);
     }
   </style>
 </head>
 <body>
 
   <header>
-    <h1>🏠 Feed</h1>
-    <a href="{% url 'criar_post' %}">+ Postar</a>
+    <div class="header-content">
+      <a href="{% url 'feed' %}" class="brand-container">
+        <div class="brand-icon">
+          <svg viewBox="0 0 24 24">
+            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+          </svg>
+        </div>
+        <span class="logo-text">Nexus</span>
+      </a>
+
+      <form class="busca-form" action="{% url 'busca' %}" method="GET">
+        <svg class="busca-icon" viewBox="0 0 24 24">
+          <path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+        </svg>
+        <input type="text" name="q" placeholder="Buscar usuário..." autocomplete="off" />
+      </form>
+
+      <div class="header-actions">
+        <a href="{% url 'chat_lista' %}" class="btn-icon-action" title="Mensagens">
+          <svg viewBox="0 0 24 24">
+            <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/>
+          </svg>
+          {% if msgs_nao_lidas %}
+            <span class="badge">{{ msgs_nao_lidas }}</span>
+          {% endif %}
+        </a>
+
+        <a href="{% url 'perfil' request.user.username %}" class="btn-icon-action" title="Meu Perfil">
+          <svg viewBox="0 0 24 24">
+            <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+          </svg>
+        </a>
+
+        <a href="{% url 'criar_post' %}" class="btn-post-header">
+          + Postar
+        </a>
+
+        <a href="{% url 'logout' %}" class="btn-logout">Sair</a>
+      </div>
+    </div>
   </header>
 
   <div class="feed">
     {% for post in posts %}
-      <div class="post">
-        <div class="post-meta">{{ post.criado_em|date:"d/m/Y \à\s H:i" }}</div>
+      <article class="post">
+        <div class="post-header">
+          <a href="{% url 'perfil' post.autor.username %}" class="post-avatar">
+            {{ post.autor.username|slice:":1" }}
+          </a>
+          <div class="post-meta-group">
+            <a href="{% url 'perfil' post.autor.username %}" class="post-author">
+              @{{ post.autor.username }}
+            </a>
+            <span class="post-meta">{{ post.criado_em|date:"d/m/Y · H:i" }}</span>
+          </div>
+        </div>
 
-        {% if post.texto %}
-          <p class="post-texto">{{ post.texto }}</p>
-        {% endif %}
+        <div class="post-body">
+          {% if post.imagem_b64 %}
+            <div class="media-wrapper">
+              <img src="{{ post.imagem_b64 }}" alt="Imagem do post" loading="lazy" />
+            </div>
+          {% endif %}
 
-        {% if post.imagem_b64 %}
-          <img src="{{ post.imagem_b64 }}" alt="Imagem do post" loading="lazy" />
-        {% endif %}
+          {% if post.video_b64 %}
+            <div class="media-wrapper">
+              <video class="autoplay-video" muted loop playsinline preload="metadata">
+                <source src="{{ post.video_b64 }}" />
+              </video>
+              <div class="mute-badge" data-badge>SEM SOM</div>
+            </div>
+          {% endif %}
 
-        {% if post.video_b64 %}
-          <video controls preload="metadata">
-            <source src="{{ post.video_b64 }}" />
-            Seu navegador não suporta vídeo.
-          </video>
-        {% endif %}
-      </div>
+          {% if post.texto %}
+            <p class="post-texto">{{ post.texto }}</p>
+          {% endif %}
+
+          <div class="acoes">
+            <!-- CURTIR -->
+            <button
+              class="acao-btn {% if post.id in curtidas_usuario %}curtido{% endif %}"
+              onclick="curtir(this, {{ post.id }})"
+              title="Curtir"
+            >
+              <svg viewBox="0 0 24 24">
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+              </svg>
+              <span class="curtidas-count-{{ post.id }}">{{ post.curtidas.count }}</span>
+            </button>
+
+            <!-- COMENTAR -->
+            <a href="{% url 'post_detalhe' post.id %}" class="acao-btn" title="Comentários">
+              <svg viewBox="0 0 24 24">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+              </svg>
+              <span>{{ post.comentarios.count }}</span>
+            </a>
+
+            <!-- COMPARTILHAR -->
+            <a href="{% url 'compartilhar' post.id %}" class="acao-btn" title="Compartilhar">
+              <svg viewBox="0 0 24 24">
+                <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/>
+                <polyline points="16 6 12 2 8 6"/>
+                <line x1="12" y1="2" x2="12" y2="15"/>
+              </svg>
+            </a>
+          </div>
+        </div>
+      </article>
     {% empty %}
       <div class="vazio">
-        <p>Nenhum post ainda.<br/>Seja o primeiro! 👆</p>
+        <div class="vazio-icon">
+          <svg viewBox="0 0 24 24">
+            <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z"/>
+          </svg>
+        </div>
+        <h2>Nenhum post no momento</h2>
+        <p>Compartilhe novidades com a comunidade postando textos, imagens ou vídeos.</p>
+        <a href="{% url 'criar_post' %}" class="vazio-btn">
+          + Criar primeiro post
+        </a>
       </div>
     {% endfor %}
   </div>
+
+  <script>
+    // Autoplay de vídeos com IntersectionObserver
+    const videos = document.querySelectorAll('.autoplay-video');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        const video = entry.target;
+        const badge = video.parentElement.querySelector('[data-badge]');
+        if (entry.isIntersecting && entry.intersectionRatio >= 0.5) {
+          video.play().catch(() => {});
+          if (badge) {
+            badge.classList.remove('hide');
+            setTimeout(() => badge.classList.add('hide'), 2000);
+          }
+        } else {
+          video.pause();
+        }
+      });
+    }, { threshold: 0.5 });
+
+    videos.forEach(v => observer.observe(v));
+
+    videos.forEach(video => {
+      video.addEventListener('click', () => {
+        video.muted = !video.muted;
+        const badge = video.parentElement.querySelector('[data-badge]');
+        if (badge) {
+          badge.textContent = video.muted ? 'SEM SOM' : 'COM SOM';
+          badge.classList.remove('hide');
+          setTimeout(() => badge.classList.add('hide'), 1500);
+        }
+      });
+    });
+
+    // Curtir via AJAX
+    function curtir(btn, postId) {
+      fetch(`/post/${postId}/curtir/`, {
+        method: 'POST',
+        headers: {
+          'X-CSRFToken': getCookie('csrftoken'),
+          'x-requested-with': 'XMLHttpRequest'
+        },
+      })
+      .then(r => r.json())
+      .then(data => {
+        btn.classList.toggle('curtido', data.curtido);
+        const countSpan = document.querySelector(`.curtidas-count-${postId}`);
+        if (countSpan) {
+          countSpan.textContent = data.total;
+        }
+      });
+    }
+
+    function getCookie(name) {
+      let v = null;
+      document.cookie.split(';').forEach(c => {
+        c = c.trim();
+        if (c.startsWith(name + '=')) v = decodeURIComponent(c.slice(name.length + 1));
+      });
+      return v;
+    }
+  </script>
 
 </body>
 </html>

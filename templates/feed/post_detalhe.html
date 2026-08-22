@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Nexus — Post de @{{ post.autor.username }}</title>
+  <style>
+    :root {
+      --bg-primary: #000000;
+      --bg-surface: #0a0b0e;
+      --bg-surface-secondary: #111418;
+      --bg-surface-hover: #161a20;
+      --bg-glass: rgba(0, 0, 0, 0.82);
+      
+      --border-subtle: rgba(255, 255, 255, 0.08);
+      --border-medium: rgba(255, 255, 255, 0.14);
+      --border-hover: rgba(255, 255, 255, 0.22);
+      
+      --text-primary: #f7f9f9;
+      --text-secondary: #71767b;
+      --text-muted: #536471;
+      
+      --accent: #1d9bf0;
+      --accent-hover: #1a8cd8;
+      --accent-active: #177cc0;
+      --accent-glow: rgba(29, 155, 240, 0.25);
+      --accent-ring: rgba(29, 155, 240, 0.15);
+      
+      --red: #f4212e;
+      
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --radius-pill: 9999px;
+      
+      --font-stack: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      --transition-smooth: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      font-family: var(--font-stack);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      text-rendering: optimizeLegibility;
+      overflow-y: scroll;
+    }
+
+    /* HEADER */
+    header {
+      position: sticky;
+      top: 0;
+      background: var(--bg-glass);
+      backdrop-filter: blur(14px) saturate(180%);
+      -webkit-backdrop-filter: blur(14px) saturate(180%);
+      border-bottom: 1px solid var(--border-subtle);
+      padding: 12px 20px;
+      z-index: 100;
+    }
+
+    .header-content {
+      max-width: 620px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .back-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: var(--radius-pill);
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-primary);
+      text-decoration: none;
+      transition: var(--transition-smooth);
+    }
+
+    .back-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--accent);
+      transform: translateX(-2px);
+    }
+
+    .back-btn svg {
+      width: 18px;
+      height: 18px;
+      fill: currentColor;
+    }
+
+    header h1 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .container {
+      max-width: 620px;
+      margin: 0 auto;
+      min-height: calc(100vh - 60px);
+      border-left: 1px solid var(--border-subtle);
+      border-right: 1px solid var(--border-subtle);
+      padding-bottom: 90px;
+    }
+
+    /* POST PRINCIPAL */
+    .post {
+      padding: 20px;
+      border-bottom: 1px solid var(--border-subtle);
+      background: var(--bg-surface);
+    }
+
+    .post-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-pill);
+      background: linear-gradient(145deg, #181b20, #0c0e12);
+      border: 1px solid var(--border-medium);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--accent);
+      font-weight: 700;
+      font-size: 1.1rem;
+      text-decoration: none;
+      text-transform: uppercase;
+    }
+
+    .post-meta-group {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .post-autor {
+      font-weight: 700;
+      font-size: 0.98rem;
+      color: var(--text-primary);
+      text-decoration: none;
+    }
+
+    .post-autor:hover {
+      color: var(--accent);
+    }
+
+    .post-meta {
+      font-size: 0.78rem;
+      color: var(--text-secondary);
+    }
+
+    .post-texto {
+      font-size: 1.05rem;
+      line-height: 1.6;
+      color: var(--text-primary);
+      margin-bottom: 14px;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .media-wrapper {
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      border: 1px solid var(--border-subtle);
+      background: #000;
+      margin-bottom: 14px;
+    }
+
+    .post img, .post video {
+      width: 100%;
+      max-height: 500px;
+      object-fit: cover;
+      display: block;
+    }
+
+    .acoes {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding-top: 12px;
+      border-top: 1px solid var(--border-subtle);
+    }
+
+    .acao-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: none;
+      border: none;
+      color: var(--text-secondary);
+      font-family: inherit;
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      padding: 6px 12px;
+      border-radius: var(--radius-pill);
+      text-decoration: none;
+      transition: var(--transition-smooth);
+    }
+
+    .acao-btn:hover {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-primary);
+    }
+
+    .acao-btn svg {
+      width: 18px;
+      height: 18px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2;
+    }
+
+    .acao-btn.curtido { color: var(--red); }
+    .acao-btn.curtido svg { fill: var(--red); stroke: var(--red); }
+
+    /* SEÇÃO DE COMENTÁRIOS */
+    .comentarios-titulo {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      padding: 18px 20px 8px;
+    }
+
+    .comentario {
+      padding: 14px 20px;
+      border-bottom: 1px solid var(--border-subtle);
+      transition: var(--transition-smooth);
+    }
+
+    .comentario:hover {
+      background: var(--bg-surface-hover);
+    }
+
+    .comentario-header {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+    }
+
+    .comentario-autor {
+      font-weight: 700;
+      font-size: 0.88rem;
+      color: var(--text-primary);
+      text-decoration: none;
+    }
+
+    .comentario-autor:hover {
+      color: var(--accent);
+    }
+
+    .comentario-meta {
+      font-size: 0.74rem;
+      color: var(--text-secondary);
+    }
+
+    .comentario-texto {
+      font-size: 0.92rem;
+      line-height: 1.5;
+      color: var(--text-primary);
+      margin-top: 4px;
+    }
+
+    /* FORM COMENTÁRIO FIXO */
+    .form-comentario-wrapper {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: var(--bg-glass);
+      backdrop-filter: blur(14px) saturate(180%);
+      -webkit-backdrop-filter: blur(14px) saturate(180%);
+      border-top: 1px solid var(--border-subtle);
+      padding: 12px 16px;
+      z-index: 90;
+    }
+
+    .form-comentario {
+      max-width: 620px;
+      margin: 0 auto;
+      display: flex;
+      gap: 10px;
+    }
+
+    .form-comentario input {
+      flex: 1;
+      background: var(--bg-surface-secondary);
+      color: var(--text-primary);
+      border: 1px solid var(--border-medium);
+      border-radius: var(--radius-pill);
+      padding: 10px 18px;
+      font-size: 0.92rem;
+      font-family: inherit;
+      outline: none;
+      transition: var(--transition-smooth);
+    }
+
+    .form-comentario input:focus {
+      border-color: var(--accent);
+      background: #000;
+      box-shadow: 0 0 0 3px var(--accent-ring);
+    }
+
+    .form-comentario button {
+      background: var(--accent);
+      color: #ffffff;
+      border: none;
+      border-radius: var(--radius-pill);
+      padding: 10px 20px;
+      font-size: 0.88rem;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 2px 10px var(--accent-glow);
+      transition: var(--transition-smooth);
+    }
+
+    .form-comentario button:hover {
+      background: var(--accent-hover);
+      transform: translateY(-1px);
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="header-content">
+      <a href="{% url 'feed' %}" class="back-btn" title="Voltar ao Feed">
+        <svg viewBox="0 0 24 24">
+          <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+        </svg>
+      </a>
+      <h1>Publicação</h1>
+    </div>
+  </header>
+
+  <div class="container">
+    <article class="post">
+      <div class="post-header">
+        <a href="{% url 'perfil' post.autor.username %}" class="avatar">
+          {{ post.autor.username|slice:":1" }}
+        </a>
+        <div class="post-meta-group">
+          <a href="{% url 'perfil' post.autor.username %}" class="post-autor">
+            @{{ post.autor.username }}
+          </a>
+          <span class="post-meta">{{ post.criado_em|date:"d/m/Y · H:i" }}</span>
+        </div>
+      </div>
+
+      {% if post.imagem_b64 %}
+        <div class="media-wrapper">
+          <img src="{{ post.imagem_b64 }}" alt="Imagem do post" loading="lazy" />
+        </div>
+      {% endif %}
+
+      {% if post.video_b64 %}
+        <div class="media-wrapper">
+          <video controls preload="metadata">
+            <source src="{{ post.video_b64 }}" />
+          </video>
+        </div>
+      {% endif %}
+
+      {% if post.texto %}
+        <p class="post-texto">{{ post.texto }}</p>
+      {% endif %}
+
+      <div class="acoes">
+        <button class="acao-btn {% if post.id in curtidas_usuario %}curtido{% endif %}" onclick="curtir(this, {{ post.id }})">
+          <svg viewBox="0 0 24 24">
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+          </svg>
+          <span class="curtidas-count-{{ post.id }}">{{ post.curtidas.count }}</span>
+        </button>
+
+        <a href="{% url 'compartilhar' post.id %}" class="acao-btn">
+          <svg viewBox="0 0 24 24">
+            <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/>
+            <polyline points="16 6 12 2 8 6"/>
+            <line x1="12" y1="2" x2="12" y2="15"/>
+          </svg>
+        </a>
+      </div>
+    </article>
+
+    <div class="comentarios-titulo">{{ comentarios.count }} comentário{{ comentarios.count|pluralize:"s" }}</div>
+
+    {% for c in comentarios %}
+      <div class="comentario">
+        <div class="comentario-header">
+          <a href="{% url 'perfil' c.autor.username %}" class="comentario-autor">@{{ c.autor.username }}</a>
+          <span class="comentario-meta">{{ c.criado_em|date:"d/m · H:i" }}</span>
+        </div>
+        <p class="comentario-texto">{{ c.texto }}</p>
+      </div>
+    {% empty %}
+      <div style="padding: 32px 20px; text-align: center; color: var(--text-secondary); font-size: 0.9rem;">
+        Seja o primeiro a comentar nesta publicação.
+      </div>
+    {% endfor %}
+  </div>
+
+  <div class="form-comentario-wrapper">
+    <form class="form-comentario" method="POST">
+      {% csrf_token %}
+      <input type="text" name="texto" placeholder="Escreva um comentário..." autocomplete="off" required />
+      <button type="submit">Enviar</button>
+    </form>
+  </div>
+
+  <script>
+    function curtir(btn, postId) {
+      fetch(`/post/${postId}/curtir/`, {
+        method: 'POST',
+        headers: { 'X-CSRFToken': getCookie('csrftoken'), 'x-requested-with': 'XMLHttpRequest' },
+      }).then(r => r.json()).then(data => {
+        btn.classList.toggle('curtido', data.curtido);
+        const countSpan = document.querySelector(`.curtidas-count-${postId}`);
+        if (countSpan) countSpan.textContent = data.total;
+      });
+    }
+
+    function getCookie(name) {
+      let v = null;
+      document.cookie.split(';').forEach(c => {
+        c = c.trim();
+        if (c.startsWith(name + '=')) v = decodeURIComponent(c.slice(name.length + 1));
+      });
+      return v;
+    }
+  </script>
+</body>
+</html>
