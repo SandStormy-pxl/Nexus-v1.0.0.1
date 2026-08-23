@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doação via Pix - Pietro de Souza Rangel</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #ffffff;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Fundo com imagem e transição (vinheta) para preto nas bordas */
+        .background-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background-image: url('assets/logo.webp');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+        .background-container::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.85) 75%, rgba(0,0,0,0.95) 100%);
+        }
+
+        /* Card principal da doação */
+        .donation-card {
+            background: rgba(20, 20, 20, 0.85);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 16px;
+            max-width: 420px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            margin-bottom: 8px;
+            color: #ffffff;
+        }
+
+        .beneficiary {
+            font-size: 0.95rem;
+            color: #aaaaaa;
+            margin-bottom: 24px;
+        }
+
+        .beneficiary strong {
+            color: #ffffff;
+        }
+
+        /* Área do Código Pix / Copia e Cola */
+        .pix-box {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px dashed rgba(255, 255, 255, 0.3);
+            padding: 12px;
+            border-radius: 8px;
+            word-break: break-all;
+            font-family: monospace;
+            font-size: 0.8rem;
+            color: #00ffcc;
+            margin-bottom: 20px;
+            max-height: 80px;
+            overflow-y: auto;
+            text-align: left;
+        }
+
+        /* Botão de ação */
+        .btn-pix {
+            background-color: #00bfa5;
+            color: #000000;
+            font-weight: bold;
+            border: none;
+            width: 100%;
+            padding: 14px;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.1s;
+        }
+
+        .btn-pix:hover {
+            background-color: #00dac6;
+        }
+
+        .btn-pix:active {
+            transform: scale(0.98);
+        }
+
+        /* Mensagem de feedback de cópia */
+        .feedback {
+            margin-top: 12px;
+            font-size: 0.85rem;
+            color: #00ffcc;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .feedback.show {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Fundo estilizado -->
+    <div class="background-container"></div>
+
+    <!-- Container do Cartão -->
+    <div class="donation-card">
+        <h1>Faça uma Doação</h1>
+        <p class="beneficiary">Favorecido: <strong>Pietro de Souza Rangel</strong></p>
+
+        <!-- Caixa contendo o código Pix copia e cola fornecido -->
+        <div class="pix-box" id="pixCode">00020126360014BR.GOV.BCB.PIX0114+55519975156215204000053039865802BR5922Pietro de Souza Rangel6009SAO PAULO62140510irHkziqcjk63047D5E</div>
+
+        <!-- Botão para copiar o código -->
+        <button class="btn-pix" onclick="copiarPix()">Copiar Código Pix</button>
+        <div class="feedback" id="feedbackMsg">Chave Pix copiada com sucesso!</div>
+    </div>
+
+    <!-- JavaScript Embutido -->
+    <script>
+        function copiarPix() {
+            const pixElement = document.getElementById('pixCode');
+            const feedbackMsg = document.getElementById('feedbackMsg');
+            const textoParaCopiar = pixElement.innerText;
+
+            // Utiliza a API moderna de Clipboard para copiar o texto
+            navigator.clipboard.writeText(textoParaCopiar).then(() => {
+                feedbackMsg.classList.add('show');
+                
+                // Oculta a mensagem de feedback após 3 segundos
+                setTimeout(() => {
+                    feedbackMsg.classList.remove('show');
+                }, 3000);
+            }).catch(err => {
+                console.error('Erro ao tentar copiar o Pix: ', err);
+                alert('Não foi possível copiar automaticamente. Por favor, selecione e copie o código manualmente.');
+            });
+        }
+    </script>
+</body>
+</html>
