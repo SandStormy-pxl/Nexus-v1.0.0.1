@@ -15,4 +15,5 @@ urlpatterns = [
     path('post/<int:post_id>/compartilhar/', views.compartilhar, name='compartilhar'),
     path('chat/', views.chat_lista, name='chat_lista'),
     path('chat/<str:username>/', views.chat_conversa, name='chat_conversa'),
+    path('doar/', views.doar, name='doar'),
 ]
