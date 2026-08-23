@@ -273,3 +273,5 @@ def compartilhar(request, post_id):
         )
         return redirect('chat_conversa', username=destinatario.username)
     return render(request, 'feed/compartilhar.html', {'post': post, 'usuarios': usuarios})
+def doar(request):
+    return render(request, 'feed/doar.html')
