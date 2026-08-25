@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Buscar / Nexus</title>
+  <style>
+    :root {
+      --bg: #000000;
+      --surface: #16181c;
+      --surface-hover: rgba(231, 233, 234, 0.03);
+      --border: #2f3336;
+      --text: #e7e9ea;
+      --muted: #71767b;
+      --twitter-blue: #1d9bf0;
+      --twitter-blue-hover: #1a8cd8;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* HEADER */
+    header {
+      position: sticky;
+      top: 0;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 10px 16px;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .btn-voltar {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      color: var(--text);
+      text-decoration: none;
+      transition: background 0.2s;
+    }
+
+    .btn-voltar:hover {
+      background: rgba(231, 233, 234, 0.1);
+    }
+
+    .btn-voltar svg {
+      width: 20px;
+      height: 20px;
+      fill: currentColor;
+    }
+
+    .search-input-form {
+      flex: 1;
+      position: relative;
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      pointer-events: none;
+    }
+
+    .search-icon svg {
+      width: 16px;
+      height: 16px;
+      fill: currentColor;
+    }
+
+    .search-input-form input {
+      width: 100%;
+      background: #202327;
+      border: 1px solid transparent;
+      border-radius: 9999px;
+      padding: 10px 16px 10px 42px;
+      color: var(--text);
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.2s, background 0.2s;
+    }
+
+    .search-input-form input:focus {
+      background: #000;
+      border-color: var(--twitter-blue);
+    }
+
+    /* CONTAINER */
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      border-left: 1px solid var(--border);
+      border-right: 1px solid var(--border);
+      min-height: calc(100vh - 60px);
+    }
+
+    .resultado-card {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border);
+      text-decoration: none;
+      color: var(--text);
+      transition: background 0.15s;
+    }
+
+    .resultado-card:hover {
+      background: var(--surface-hover);
+    }
+
+    .user-info-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .avatar-res {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: #272c30;
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: var(--text);
+      text-transform: uppercase;
+      flex-shrink: 0;
+    }
+
+    .user-names {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .fullname {
+      font-weight: 700;
+      font-size: 0.95rem;
+    }
+
+    .handle {
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    .btn-view-profile {
+      background: var(--text);
+      color: var(--bg);
+      border-radius: 9999px;
+      padding: 6px 16px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      pointer-events: none;
+    }
+
+    .empty-search {
+      text-align: center;
+      padding: 80px 24px;
+      color: var(--muted);
+    }
+
+    .empty-search-icon {
+      font-size: 2.5rem;
+      margin-bottom: 12px;
+      display: block;
+      color: var(--twitter-blue);
+    }
+
+    .empty-search p {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+
+    .empty-search small {
+      font-size: 0.88rem;
+      color: var(--muted);
+    }
+  
+    /* ── NAVBAR INFERIOR (estilo Instagram) ────────────── */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(0, 0, 0, 0.92);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      padding: 8px 6px calc(8px + env(safe-area-inset-bottom));
+      z-index: 200;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .bottom-nav-item {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      color: var(--text);
+      text-decoration: none;
+      transition: background 0.2s;
+    }
+
+    .bottom-nav-item:hover {
+      background: rgba(231, 233, 234, 0.08);
+    }
+
+    .bottom-nav-item svg {
+      width: 24px;
+      height: 24px;
+      fill: currentColor;
+    }
+
+    .bottom-nav-item.ativo {
+      color: var(--twitter-blue);
+    }
+
+    .bottom-nav-item .avatar-mini-nav {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: #333639;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      border: 1px solid var(--border);
+    }
+
+    .bottom-nav-badge {
+      position: absolute;
+      top: 2px;
+      right: 2px;
+      background: var(--twitter-blue);
+      color: #fff;
+      font-size: 0.62rem;
+      font-weight: 700;
+      min-width: 15px;
+      height: 15px;
+      border-radius: 9999px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 3px;
+      border: 2px solid #000;
+    }
+
+    body {
+      padding-bottom: 66px;
+    }
+
+  </style>
+</head>
+<body>
+
+  <header>
+    <a href="{% url 'feed' %}" class="btn-voltar" title="Voltar">
+      <svg viewBox="0 0 24 24"><path d="M7.414 13l5.043 5.04-1.414 1.42L3.586 12l7.457-7.46 1.414 1.42L7.414 11H21v2H7.414z"/></svg>
+    </a>
+    <form class="search-input-form" action="{% url 'busca' %}" method="GET">
+      <div class="search-icon">
+        <svg viewBox="0 0 24 24"><path d="M10.25 3.75a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13zm-8.5 6.5a8.5 8.5 0 1 1 15.176 5.262l4.406 4.406a1 1 0 0 1-1.414 1.414l-4.406-4.406A8.5 8.5 0 0 1 1.75 10.25z"/></svg>
+      </div>
+      <input type="text" name="q" value="{{ query }}" placeholder="Buscar pessoas no Nexus" autocomplete="off" autofocus />
+    </form>
+  </header>
+
+  <div class="container">
+    {% if query %}
+      {% for u in resultados %}
+        <a href="{% url 'perfil' u.username %}" class="resultado-card">
+          <div class="user-info-group">
+            <div class="avatar-res">{{ u.username|slice:":1" }}</div>
+            <div class="user-names">
+              <span class="fullname">{{ u.username }}</span>
+              <span class="handle">@{{ u.username }}</span>
+            </div>
+          </div>
+          <span class="btn-view-profile">Ver perfil</span>
+        </a>
+      {% empty %}
+        <div class="empty-search">
+          <p>Nenhum resultado para "{{ query }}"</p>
+          <small>Tente buscar por outro nome de usuário.</small>
+        </div>
+      {% endfor %}
+    {% else %}
+      <div class="empty-search">
+        <div class="empty-search-icon">
+          <svg style="width:40px;height:40px;fill:currentColor;" viewBox="0 0 24 24"><path d="M10.25 3.75a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13zm-8.5 6.5a8.5 8.5 0 1 1 15.176 5.262l4.406 4.406a1 1 0 0 1-1.414 1.414l-4.406-4.406A8.5 8.5 0 0 1 1.75 10.25z"/></svg>
+        </div>
+        <p>Encontre pessoas no Nexus</p>
+        <small>Digite um nome de usuário na barra de busca acima.</small>
+      </div>
+    {% endif %}
+  </div>
+
+  <!-- NAVBAR INFERIOR -->
+  <nav class="bottom-nav">
+    <a href="{% url 'feed' %}" class="bottom-nav-item" title="Início">
+      <svg viewBox="0 0 24 24"><path d="M12 1.696L.622 8.62l1.06 1.696L3 9.617V19.5A2.5 2.5 0 0 0 5.5 22h13a2.5 2.5 0 0 0 2.5-2.5V9.617l1.318.699 1.06-1.696L12 1.696zM19 19.5a.5.5 0 0 1-.5.5h-13a.5.5 0 0 1-.5-.5V8.393l7-4.157 7 4.157V19.5z"/></svg>
+    </a>
+    <a href="{% url 'busca' %}" class="bottom-nav-item ativo" title="Buscar">
+      <svg viewBox="0 0 24 24"><path d="M10.25 3.75a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13zm-8.5 6.5a8.5 8.5 0 1 1 15.176 5.262l4.406 4.406a1 1 0 0 1-1.414 1.414l-4.406-4.406A8.5 8.5 0 0 1 1.75 10.25z"/></svg>
+    </a>
+    <a href="{% url 'criar_post' %}" class="bottom-nav-item" title="Postar">
+      <svg viewBox="0 0 24 24"><path d="M12 2a1 1 0 0 1 1 1v8h8a1 1 0 1 1 0 2h-8v8a1 1 0 1 1-2 0v-8H3a1 1 0 1 1 0-2h8V3a1 1 0 0 1 1-1z"/></svg>
+    </a>
+    <a href="{% url 'chat_lista' %}" class="bottom-nav-item" title="Mensagens">
+      <svg viewBox="0 0 24 24"><path d="M1.998 5.5A2.5 2.5 0 0 1 4.5 3h15A2.5 2.5 0 0 1 22 5.5v10a2.5 2.5 0 0 1-2.5 2.5H7.327l-4.636 3.864A1 1 0 0 1 1 21.09V5.5zm2.5-.5a.5.5 0 0 0-.5.5v13.627l3.636-3.03A1 1 0 0 1 8.273 16H19.5a.5.5 0 0 0 .5-.5v-10a.5.5 0 0 0-.5-.5h-15z"/></svg>
+      {% if msgs_nao_lidas %}
+        <span class="bottom-nav-badge">{{ msgs_nao_lidas }}</span>
+      {% endif %}
+    </a>
+    <a href="{% url 'perfil' request.user.username %}" class="bottom-nav-item" title="Perfil">
+      <span class="avatar-mini-nav">{{ request.user.username|slice:":1" }}</span>
+    </a>
+  </nav>
+
+</body>
+</html>

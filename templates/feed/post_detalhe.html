@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Post de @{{ post.autor.username }} / Nexus</title>
+  <style>
+    :root {
+      --bg: #000000;
+      --surface: #16181c;
+      --surface-hover: rgba(231, 233, 234, 0.03);
+      --border: #2f3336;
+      --text: #e7e9ea;
+      --muted: #71767b;
+      --twitter-blue: #1d9bf0;
+      --twitter-blue-hover: #1a8cd8;
+      --twitter-pink: #f91880;
+      --twitter-green: #00ba7c;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* HEADER */
+    header {
+      position: sticky;
+      top: 0;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 12px 16px;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .btn-voltar {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      color: var(--text);
+      text-decoration: none;
+      transition: background 0.2s;
+    }
+
+    .btn-voltar:hover {
+      background: rgba(231, 233, 234, 0.1);
+    }
+
+    .btn-voltar svg {
+      width: 20px;
+      height: 20px;
+      fill: currentColor;
+    }
+
+    .header-title {
+      font-size: 1.15rem;
+      font-weight: 800;
+    }
+
+    /* CONTAINER */
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      border-left: 1px solid var(--border);
+      border-right: 1px solid var(--border);
+      min-height: calc(100vh - 60px);
+    }
+
+    /* MAIN POST ARTICLE */
+    .main-post {
+      padding: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .post-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .author-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: #272c30;
+      border: 1px solid var(--border);
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 1.1rem;
+      text-transform: uppercase;
+      text-decoration: none;
+    }
+
+    .author-names {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .author-fullname {
+      font-weight: 800;
+      font-size: 1rem;
+      color: var(--text);
+      text-decoration: none;
+    }
+
+    .author-fullname:hover {
+      text-decoration: underline;
+    }
+
+    .author-handle {
+      font-size: 0.9rem;
+      color: var(--muted);
+      text-decoration: none;
+    }
+
+    .main-post-text {
+      font-size: 1.25rem;
+      line-height: 1.5;
+      color: var(--text);
+      white-space: pre-wrap;
+      word-break: break-word;
+      margin-bottom: 14px;
+    }
+
+    .post-media {
+      margin: 12px 0;
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      background: #080808;
+    }
+
+    .post-media img {
+      width: 100%;
+      max-height: 520px;
+      object-fit: cover;
+      display: block;
+    }
+
+    .post-media video {
+      width: 100%;
+      max-height: 520px;
+      display: block;
+      background: #000;
+      outline: none;
+    }
+
+    .post-timestamp {
+      padding: 14px 0;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      font-size: 0.9rem;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .post-stats {
+      display: flex;
+      gap: 20px;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.9rem;
+    }
+
+    .stat-item {
+      color: var(--muted);
+    }
+
+    .stat-num {
+      color: var(--text);
+      font-weight: 700;
+    }
+
+    /* ACTION BAR */
+    .post-actions {
+      display: flex;
+      justify-content: space-around;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .action-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: none;
+      border: none;
+      color: var(--muted);
+      cursor: pointer;
+      text-decoration: none;
+      transition: color 0.2s, background 0.2s;
+    }
+
+    .action-btn svg {
+      width: 20px;
+      height: 20px;
+      fill: currentColor;
+    }
+
+    .action-btn.btn-reply:hover {
+      color: var(--twitter-blue);
+      background: rgba(29, 155, 240, 0.1);
+    }
+
+    .action-btn.btn-share:hover {
+      color: var(--twitter-green);
+      background: rgba(0, 186, 124, 0.1);
+    }
+
+    .action-btn.btn-like:hover {
+      color: var(--twitter-pink);
+      background: rgba(249, 24, 128, 0.1);
+    }
+
+    .action-btn.btn-like.liked {
+      color: var(--twitter-pink);
+    }
+
+    .action-btn.btn-like.liked svg {
+      fill: var(--twitter-pink);
+    }
+
+    /* COMPOSE COMMENT */
+    .form-reply-box {
+      display: flex;
+      gap: 12px;
+      padding: 16px;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg);
+    }
+
+    .reply-user-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: #272c30;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 1rem;
+      text-transform: uppercase;
+      flex-shrink: 0;
+    }
+
+    .reply-input-wrapper {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .reply-input-wrapper input {
+      width: 100%;
+      background: transparent;
+      border: none;
+      color: var(--text);
+      font-size: 1.1rem;
+      outline: none;
+      padding: 8px 0;
+      font-family: inherit;
+    }
+
+    .reply-input-wrapper input::placeholder {
+      color: var(--muted);
+    }
+
+    .reply-footer {
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .btn-submit-reply {
+      background: var(--twitter-blue);
+      color: #fff;
+      border: none;
+      border-radius: 9999px;
+      padding: 8px 18px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .btn-submit-reply:hover {
+      background: var(--twitter-blue-hover);
+    }
+
+    /* COMMENTS SECTION */
+    .comments-header-label {
+      padding: 14px 16px 8px;
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .comment-item {
+      display: flex;
+      gap: 12px;
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border);
+      transition: background 0.15s;
+    }
+
+    .comment-item:hover {
+      background: var(--surface-hover);
+    }
+
+    .comment-avatar {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: #272c30;
+      border: 1px solid var(--border);
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.95rem;
+      text-transform: uppercase;
+      text-decoration: none;
+      flex-shrink: 0;
+    }
+
+    .comment-content {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .comment-header {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 4px;
+    }
+
+    .comment-author {
+      font-weight: 700;
+      font-size: 0.92rem;
+      color: var(--text);
+      text-decoration: none;
+    }
+
+    .comment-author:hover {
+      text-decoration: underline;
+    }
+
+    .comment-handle {
+      font-size: 0.88rem;
+      color: var(--muted);
+      text-decoration: none;
+    }
+
+    .comment-dot {
+      color: var(--muted);
+      font-size: 0.8rem;
+    }
+
+    .comment-time {
+      font-size: 0.82rem;
+      color: var(--muted);
+    }
+
+    .comment-text {
+      font-size: 0.95rem;
+      line-height: 1.45;
+      color: var(--text);
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .no-comments {
+      text-align: center;
+      padding: 40px 16px;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+  
+    /* ── NAVBAR INFERIOR (estilo Instagram) ────────────── */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(0, 0, 0, 0.92);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      padding: 8px 6px calc(8px + env(safe-area-inset-bottom));
+      z-index: 200;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .bottom-nav-item {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      color: var(--text);
+      text-decoration: none;
+      transition: background 0.2s;
+    }
+
+    .bottom-nav-item:hover {
+      background: rgba(231, 233, 234, 0.08);
+    }
+
+    .bottom-nav-item svg {
+      width: 24px;
+      height: 24px;
+      fill: currentColor;
+    }
+
+    .bottom-nav-item.ativo {
+      color: var(--twitter-blue);
+    }
+
+    .bottom-nav-item .avatar-mini-nav {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: #333639;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      border: 1px solid var(--border);
+    }
+
+    .bottom-nav-badge {
+      position: absolute;
+      top: 2px;
+      right: 2px;
+      background: var(--twitter-blue);
+      color: #fff;
+      font-size: 0.62rem;
+      font-weight: 700;
+      min-width: 15px;
+      height: 15px;
+      border-radius: 9999px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 3px;
+      border: 2px solid #000;
+    }
+
+    body {
+      padding-bottom: 66px;
+    }
+
+  </style>
+</head>
+<body>
+
+  <header>
+    <a href="{% url 'feed' %}" class="btn-voltar" title="Voltar ao feed">
+      <svg viewBox="0 0 24 24"><path d="M7.414 13l5.043 5.04-1.414 1.42L3.586 12l7.457-7.46 1.414 1.42L7.414 11H21v2H7.414z"/></svg>
+    </a>
+    <h1 class="header-title">Post</h1>
+  </header>
+
+  <div class="container">
+
+    <!-- MAIN POST -->
+    <article class="main-post">
+      <div class="post-header">
+        <a href="{% url 'perfil' post.autor.username %}" class="author-avatar">
+          {{ post.autor.username|slice:":1" }}
+        </a>
+        <div class="author-names">
+          <a href="{% url 'perfil' post.autor.username %}" class="author-fullname">{{ post.autor.username }}</a>
+          <a href="{% url 'perfil' post.autor.username %}" class="author-handle">@{{ post.autor.username }}</a>
+        </div>
+      </div>
+
+      {% if post.texto %}
+        <p class="main-post-text">{{ post.texto }}</p>
+      {% endif %}
+
+      {% if post.imagem_b64 %}
+        <div class="post-media">
+          <img src="{{ post.imagem_b64 }}" alt="Imagem do post" loading="lazy" />
+        </div>
+      {% endif %}
+
+      {% if post.video_b64 %}
+        <div class="post-media">
+          <video controls preload="metadata">
+            <source src="{{ post.video_b64 }}" />
+          </video>
+        </div>
+      {% endif %}
+
+      <div class="post-timestamp">
+        <span>{{ post.criado_em|date:"H:i" }}</span>
+        <span>·</span>
+        <span>{{ post.criado_em|date:"d \d\e M \d\e Y" }}</span>
+      </div>
+
+      <div class="post-stats">
+        <div class="stat-item">
+          <span class="stat-num" id="like-total">{{ post.curtidas.count }}</span> Curtida{{ post.curtidas.count|pluralize:"s" }}
+        </div>
+        <div class="stat-item">
+          <span class="stat-num">{{ comentarios.count }}</span> Resposta{{ comentarios.count|pluralize:"s" }}
+        </div>
+      </div>
+
+      <div class="post-actions">
+        <!-- REPLY -->
+        <a href="#comment-input" class="action-btn btn-reply" title="Responder">
+          <svg viewBox="0 0 24 24"><path d="M1.751 10c0-4.42 3.58-8 8-8s8 3.58 8 8c0 2.03-.76 3.87-2.01 5.28l1.76 4.41c.21.52-.25 1.06-.8.95l-5.11-1.02A7.95 7.95 0 0 1 9.751 20c-4.42 0-8-3.58-8-8zm8-6c-3.31 0-6 2.69-6 6s2.69 6 6 6c1.39 0 2.66-.47 3.68-1.27a1 1 0 0 1 .89-.17l3.2.64-1.07-2.67a1 1 0 0 1 .15-.99A5.96 5.96 0 0 0 15.751 10c0-3.31-2.69-6-6-6z"/></svg>
+        </a>
+
+        <!-- SHARE -->
+        <a href="{% url 'compartilhar' post.id %}" class="action-btn btn-share" title="Compartilhar via DM">
+          <svg viewBox="0 0 24 24"><path d="M12 2.59l5.7 5.7-1.41 1.42L13 6.41V16h-2V6.41L7.71 9.71 6.3 8.29 12 2.59zM21 15l-.02 3.51c0 1.38-1.12 2.49-2.5 2.49H5.5C4.11 21.08 3 19.97 3 18.59V15h2v3.59c0 .28.22.5.5.5h12.98c.28 0 .5-.22.5-.5L19 15h2z"/></svg>
+        </a>
+
+        <!-- LIKE -->
+        <button
+          class="action-btn btn-like {% if post.id in curtidas_usuario %}liked{% endif %}"
+          onclick="curtir(this, {{ post.id }})"
+          title="Curtir"
+        >
+          <svg viewBox="0 0 24 24">
+            {% if post.id in curtidas_usuario %}
+              <path d="M12 21.638h-.014C9.403 21.59 1.95 14.856 1.95 8.478c0-3.064 2.525-5.754 5.403-5.754 2.29 0 3.83 1.58 4.646 2.73.814-1.148 2.354-2.73 4.645-2.73 2.88 0 5.404 2.69 5.404 5.755 0 6.376-7.454 13.11-10.037 13.157H12z"/>
+            {% else %}
+              <path d="M16.69 2.724c-1.89 0-3.41 1.09-4.69 2.48-1.28-1.39-2.8-2.48-4.69-2.48-3.3 0-6.06 2.67-6.06 6.27 0 6.25 7.15 12.18 10.15 12.63.3.05.6.05.9 0 3-.45 10.15-6.38 10.15-12.63 0-3.6-2.76-6.27-6.06-6.27zm-4.69 16.5c-2.31-.47-8.15-5.46-8.15-10.23 0-2.5 1.83-4.27 4.06-4.27 1.6 0 3.01 1.13 3.65 2.52h.88c.64-1.39 2.05-2.52 3.65-2.52 2.23 0 4.06 1.77 4.06 4.27 0 4.77-5.84 9.76-8.15 10.23z"/>
+            {% endif %}
+          </svg>
+        </button>
+      </div>
+    </article>
+
+    <!-- FORM COMPOSE COMMENT -->
+    <form class="form-reply-box" method="POST">
+      {% csrf_token %}
+      <div class="reply-user-avatar">
+        {{ request.user.username|slice:":1" }}
+      </div>
+      <div class="reply-input-wrapper">
+        <input
+          type="text"
+          id="comment-input"
+          name="texto"
+          placeholder="Postar sua resposta"
+          autocomplete="off"
+          required
+        />
+        <div class="reply-footer">
+          <button type="submit" class="btn-submit-reply">Responder</button>
+        </div>
+      </div>
+    </form>
+
+    <!-- COMMENTS STREAM -->
+    <div class="comments-header-label">Respostas</div>
+
+    {% for c in comentarios %}
+      <div class="comment-item">
+        <a href="{% url 'perfil' c.autor.username %}" class="comment-avatar">
+          {{ c.autor.username|slice:":1" }}
+        </a>
+        <div class="comment-content">
+          <div class="comment-header">
+            <a href="{% url 'perfil' c.autor.username %}" class="comment-author">{{ c.autor.username }}</a>
+            <a href="{% url 'perfil' c.autor.username %}" class="comment-handle">@{{ c.autor.username }}</a>
+            <span class="comment-dot">·</span>
+            <span class="comment-time">{{ c.criado_em|date:"d/m · H:i" }}</span>
+          </div>
+          <p class="comment-text">{{ c.texto }}</p>
+        </div>
+      </div>
+    {% empty %}
+      <div class="no-comments">Nenhuma resposta ainda. Seja o primeiro a responder!</div>
+    {% endfor %}
+
+  </div>
+
+  <script>
+    function curtir(btn, postId) {
+      fetch(`/post/${postId}/curtir/`, {
+        method: 'POST',
+        headers: {
+          'X-CSRFToken': getCookie('csrftoken'),
+          'x-requested-with': 'XMLHttpRequest'
+        },
+      })
+      .then(r => r.json())
+      .then(data => {
+        btn.classList.toggle('liked', data.curtido);
+        const svg = btn.querySelector('svg');
+        if (data.curtido) {
+          svg.innerHTML = '<path d="M12 21.638h-.014C9.403 21.59 1.95 14.856 1.95 8.478c0-3.064 2.525-5.754 5.403-5.754 2.29 0 3.83 1.58 4.646 2.73.814-1.148 2.354-2.73 4.645-2.73 2.88 0 5.404 2.69 5.404 5.755 0 6.376-7.454 13.11-10.037 13.157H12z"/>';
+        } else {
+          svg.innerHTML = '<path d="M16.69 2.724c-1.89 0-3.41 1.09-4.69 2.48-1.28-1.39-2.8-2.48-4.69-2.48-3.3 0-6.06 2.67-6.06 6.27 0 6.25 7.15 12.18 10.15 12.63.3.05.6.05.9 0 3-.45 10.15-6.38 10.15-12.63 0-3.6-2.76-6.27-6.06-6.27zm-4.69 16.5c-2.31-.47-8.15-5.46-8.15-10.23 0-2.5 1.83-4.27 4.06-4.27 1.6 0 3.01 1.13 3.65 2.52h.88c.64-1.39 2.05-2.52 3.65-2.52 2.23 0 4.06 1.77 4.06 4.27 0 4.77-5.84 9.76-8.15 10.23z"/>';
+        }
+        document.getElementById('like-total').textContent = data.total;
+      });
+    }
+
+    function getCookie(name) {
+      let v = null;
+      document.cookie.split(';').forEach(c => {
+        c = c.trim();
+        if (c.startsWith(name + '=')) v = decodeURIComponent(c.slice(name.length + 1));
+      });
+      return v;
+    }
+  </script>
+
+  <!-- NAVBAR INFERIOR -->
+  <nav class="bottom-nav">
+    <a href="{% url 'feed' %}" class="bottom-nav-item" title="Início">
+      <svg viewBox="0 0 24 24"><path d="M12 1.696L.622 8.62l1.06 1.696L3 9.617V19.5A2.5 2.5 0 0 0 5.5 22h13a2.5 2.5 0 0 0 2.5-2.5V9.617l1.318.699 1.06-1.696L12 1.696zM19 19.5a.5.5 0 0 1-.5.5h-13a.5.5 0 0 1-.5-.5V8.393l7-4.157 7 4.157V19.5z"/></svg>
+    </a>
+    <a href="{% url 'busca' %}" class="bottom-nav-item" title="Buscar">
+      <svg viewBox="0 0 24 24"><path d="M10.25 3.75a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13zm-8.5 6.5a8.5 8.5 0 1 1 15.176 5.262l4.406 4.406a1 1 0 0 1-1.414 1.414l-4.406-4.406A8.5 8.5 0 0 1 1.75 10.25z"/></svg>
+    </a>
+    <a href="{% url 'criar_post' %}" class="bottom-nav-item" title="Postar">
+      <svg viewBox="0 0 24 24"><path d="M12 2a1 1 0 0 1 1 1v8h8a1 1 0 1 1 0 2h-8v8a1 1 0 1 1-2 0v-8H3a1 1 0 1 1 0-2h8V3a1 1 0 0 1 1-1z"/></svg>
+    </a>
+    <a href="{% url 'chat_lista' %}" class="bottom-nav-item" title="Mensagens">
+      <svg viewBox="0 0 24 24"><path d="M1.998 5.5A2.5 2.5 0 0 1 4.5 3h15A2.5 2.5 0 0 1 22 5.5v10a2.5 2.5 0 0 1-2.5 2.5H7.327l-4.636 3.864A1 1 0 0 1 1 21.09V5.5zm2.5-.5a.5.5 0 0 0-.5.5v13.627l3.636-3.03A1 1 0 0 1 8.273 16H19.5a.5.5 0 0 0 .5-.5v-10a.5.5 0 0 0-.5-.5h-15z"/></svg>
+      {% if msgs_nao_lidas %}
+        <span class="bottom-nav-badge">{{ msgs_nao_lidas }}</span>
+      {% endif %}
+    </a>
+    <a href="{% url 'perfil' request.user.username %}" class="bottom-nav-item" title="Perfil">
+      <span class="avatar-mini-nav">{{ request.user.username|slice:":1" }}</span>
+    </a>
+  </nav>
+
+</body>
+</html>

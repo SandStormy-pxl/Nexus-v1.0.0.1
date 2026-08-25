@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Story de {{ usuario.username }} / Nexus</title>
+  <style>
+    :root {
+      --text: #e7e9ea;
+      --muted: #a7a7a7;
+      --twitter-blue: #1d9bf0;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      background: #000;
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      height: 100%;
+      overflow: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .story-stage {
+      position: relative;
+      width: 100%;
+      height: 100dvh;
+      max-width: 480px;
+      margin: 0 auto;
+      background: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .story-slide {
+      position: absolute;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .story-slide.ativo { display: flex; }
+
+    .story-slide img,
+    .story-slide video {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      background: #000;
+    }
+
+    /* PROGRESS BARS */
+    .progress-row {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      right: 10px;
+      display: flex;
+      gap: 4px;
+      z-index: 20;
+    }
+
+    .progress-track {
+      flex: 1;
+      height: 3px;
+      border-radius: 3px;
+      background: rgba(255, 255, 255, 0.3);
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background: #fff;
+    }
+
+    .progress-fill.completo { width: 100%; }
+
+    .progress-fill.animando {
+      transition: width linear;
+    }
+
+    /* TOP INFO BAR */
+    .story-topbar {
+      position: absolute;
+      top: 22px;
+      left: 10px;
+      right: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 20;
+    }
+
+    .story-user-info {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .story-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: #272c30;
+      border: 1px solid rgba(255,255,255,0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+    }
+
+    .story-username {
+      font-weight: 700;
+      font-size: 0.9rem;
+    }
+
+    .story-tempo {
+      font-size: 0.78rem;
+      color: var(--muted);
+    }
+
+    .btn-fechar-story {
+      background: none;
+      border: none;
+      color: #fff;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+    }
+
+    .btn-fechar-story svg { width: 24px; height: 24px; fill: currentColor; }
+
+    /* CLICK ZONES */
+    .zona-clique {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 32%;
+      z-index: 15;
+      cursor: pointer;
+    }
+
+    .zona-esquerda { left: 0; }
+    .zona-direita { right: 0; }
+
+    /* AUTOR SEM STORY VAZIO */
+    .story-vazio {
+      color: var(--muted);
+      text-align: center;
+      padding: 40px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="story-stage" id="stage">
+
+    <div class="progress-row" id="progressRow"></div>
+
+    <div class="story-topbar">
+      <div class="story-user-info">
+        <div class="story-avatar">{{ usuario.username|slice:":1" }}</div>
+        <div>
+          <div class="story-username">{{ usuario.username }}</div>
+          <div class="story-tempo" id="storyTempo"></div>
+        </div>
+      </div>
+      <a href="{% url 'feed' %}" class="btn-fechar-story" title="Fechar">
+        <svg viewBox="0 0 24 24"><path d="M18.36 5.64a1 1 0 0 0-1.41 0L12 10.59 7.05 5.64a1 1 0 1 0-1.41 1.41L10.59 12l-4.95 4.95a1 1 0 1 0 1.41 1.41L12 13.41l4.95 4.95a1 1 0 0 0 1.41-1.41L13.41 12l4.95-4.95a1 1 0 0 0 0-1.41z"/></svg>
+      </a>
+    </div>
+
+    {% for story in stories %}
+      <div class="story-slide" data-index="{{ forloop.counter0 }}" data-id="{{ story.id }}" data-criado="{{ story.criado_em|date:'c' }}">
+        {% if story.imagem_b64 %}
+          <img src="{{ story.imagem_b64 }}" alt="Story de {{ usuario.username }}" />
+        {% elif story.video_b64 %}
+          <video src="{{ story.video_b64 }}" playsinline autoplay muted></video>
+        {% endif %}
+      </div>
+    {% empty %}
+      <div class="story-vazio">Este usuário não tem stories no momento.</div>
+    {% endfor %}
+
+    <div class="zona-clique zona-esquerda" onclick="storyAnterior()"></div>
+    <div class="zona-clique zona-direita" onclick="storyProximo()"></div>
+
+  </div>
+
+  <script>
+    const slides = Array.from(document.querySelectorAll('.story-slide'));
+    const progressRow = document.getElementById('progressRow');
+    const PROXIMO_USERNAME = {% if proximo_username %}"{{ proximo_username }}"{% else %}null{% endif %};
+    const DURACAO_IMAGEM = 6000; // ms
+    let atual = 0;
+    let timer = null;
+    let inicioSlide = 0;
+
+    // monta as barras de progresso, uma por slide
+    slides.forEach((_, i) => {
+      const track = document.createElement('div');
+      track.className = 'progress-track';
+      const fill = document.createElement('div');
+      fill.className = 'progress-fill';
+      fill.id = `fill-${i}`;
+      track.appendChild(fill);
+      progressRow.appendChild(track);
+    });
+
+    function marcarVisto(storyId) {
+      fetch(`/story/${storyId}/visto/`, {
+        method: 'POST',
+        headers: {
+          'X-CSRFToken': getCookie('csrftoken'),
+          'x-requested-with': 'XMLHttpRequest'
+        }
+      }).catch(() => {});
+    }
+
+    function getCookie(name) {
+      let v = null;
+      document.cookie.split(';').forEach(c => {
+        c = c.trim();
+        if (c.startsWith(name + '=')) v = decodeURIComponent(c.slice(name.length + 1));
+      });
+      return v;
+    }
+
+    function atualizarTempo(slide) {
+      const criado = new Date(slide.dataset.criado);
+      const diffMin = Math.max(0, Math.round((Date.now() - criado.getTime()) / 60000));
+      const el = document.getElementById('storyTempo');
+      if (diffMin < 1) el.textContent = 'agora';
+      else if (diffMin < 60) el.textContent = `${diffMin}m`;
+      else el.textContent = `${Math.round(diffMin / 60)}h`;
+    }
+
+    function pararVideoAtual() {
+      slides.forEach(s => {
+        const v = s.querySelector('video');
+        if (v) { v.pause(); }
+      });
+    }
+
+    function mostrarSlide(index) {
+      if (index < 0) { window.location.href = "{% url 'feed' %}"; return; }
+      if (index >= slides.length) {
+        if (PROXIMO_USERNAME) {
+          window.location.href = `/story/${PROXIMO_USERNAME}/`;
+        } else {
+          window.location.href = "{% url 'feed' %}";
+        }
+        return;
+      }
+
+      clearTimeout(timer);
+      pararVideoAtual();
+
+      slides.forEach(s => s.classList.remove('ativo'));
+      slides[index].classList.add('ativo');
+      atual = index;
+      atualizarTempo(slides[index]);
+      marcarVisto(slides[index].dataset.id);
+
+      // reseta barras
+      slides.forEach((_, i) => {
+        const fill = document.getElementById(`fill-${i}`);
+        fill.classList.remove('animando');
+        fill.style.transition = 'none';
+        fill.style.width = i < index ? '100%' : '0%';
+      });
+
+      const fillAtual = document.getElementById(`fill-${index}`);
+      const video = slides[index].querySelector('video');
+
+      if (video) {
+        video.currentTime = 0;
+        video.muted = false;
+        video.play().catch(() => { video.muted = true; video.play().catch(() => {}); });
+        video.onloadedmetadata = () => {
+          const duracaoMs = (isFinite(video.duration) && video.duration > 0) ? video.duration * 1000 : DURACAO_IMAGEM;
+          animarBarra(fillAtual, duracaoMs);
+          timer = setTimeout(() => mostrarSlide(atual + 1), duracaoMs);
+        };
+        video.onended = () => mostrarSlide(atual + 1);
+      } else {
+        animarBarra(fillAtual, DURACAO_IMAGEM);
+        timer = setTimeout(() => mostrarSlide(atual + 1), DURACAO_IMAGEM);
+      }
+    }
+
+    function animarBarra(fill, duracaoMs) {
+      requestAnimationFrame(() => {
+        fill.style.transition = `width ${duracaoMs}ms linear`;
+        fill.classList.add('animando');
+        fill.style.width = '100%';
+      });
+    }
+
+    function storyProximo() { mostrarSlide(atual + 1); }
+    function storyAnterior() { mostrarSlide(atual - 1); }
+
+    if (slides.length > 0) {
+      mostrarSlide(0);
+    }
+  </script>
+
+</body>
+</html>
