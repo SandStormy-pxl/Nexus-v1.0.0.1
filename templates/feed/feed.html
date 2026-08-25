@@ -72,6 +72,8 @@
       width: 32px;
       height: 32px;
       border-radius: 8px;
+      background: #050814;
+      display: block;
     }
 
     .header-title {
@@ -492,6 +494,8 @@
       width: 48px;
       height: 48px;
       border-radius: 10px;
+      background: #050814;
+      display: block;
     }
 
     .vazio-titulo {
@@ -709,7 +713,7 @@
   <header>
     <div class="header-left">
       <a href="{% url 'feed' %}" class="brand-logo" title="Nexus">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" width="500" height="500" preserveAspectRatio="xMidYMid slice">
           <defs>
             <linearGradient id="blueGradient" x1="0%" y1="0%" x2="100%" y2="100%">
               <stop offset="0%" stop-color="#00d2ff"/>
@@ -861,7 +865,7 @@
     {% empty %}
       <div class="vazio-container">
         <div class="vazio-icon">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" width="500" height="500" preserveAspectRatio="xMidYMid slice">
             <defs>
               <linearGradient id="blueGradientVazio" x1="0%" y1="0%" x2="100%" y2="100%">
                 <stop offset="0%" stop-color="#00d2ff"/>
