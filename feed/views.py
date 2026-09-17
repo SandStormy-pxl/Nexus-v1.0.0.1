@@ -303,14 +303,27 @@ def perfil(request, username):
 def busca(request):
     query = request.GET.get('q', '').strip()
     resultados = []
-    if query:
-        resultados = User.objects.filter(username__icontains=query).exclude(id=request.user.id)
-    msgs_nao_lidas = Mensagem.objects.filter(destinatario=request.user, lida=False).count()
+
+    if query == '*':
+        # Curinga: retorna todos exceto o próprio usuário, ordenados por username
+        resultados = User.objects.exclude(id=request.user.id).order_by('username')
+    elif query:
+        # Busca normal por trecho de nome
+        resultados = User.objects.filter(
+            username__icontains=query
+        ).exclude(id=request.user.id)
+
+    msgs_nao_lidas = Mensagem.objects.filter(
+        destinatario=request.user, 
+        lida=False
+    ).count()
+
     return render(request, 'feed/busca.html', {
         'query': query,
         'resultados': resultados,
         'msgs_nao_lidas': msgs_nao_lidas,
     })
+
 
 
 # ── CHAT ──────────────────────────────────────────────
